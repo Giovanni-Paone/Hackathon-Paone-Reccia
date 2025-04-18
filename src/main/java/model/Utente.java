@@ -1,20 +1,24 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  * The type Utente.
  */
 public class Utente {
-    private final String login;
+    private final String NICKNAME;
     private String password;
+    public ArrayList<Date> impegni = new ArrayList();
 
     /**
      * Instantiates a new Utente.
      *
-     * @param login    the login
+     * @param NICKNAME    the NICKNAME
      * @param password the password
      */
-    public Utente(String login, String password) {
-        this.login = login;
+    public Utente(String NICKNAME, String password) {
+        this.NICKNAME = NICKNAME;
         this.password = password;
     }
 
@@ -23,7 +27,9 @@ public class Utente {
      *
      * @return the login
      */
-    public String getLogin() {
-        return login;
+    public String getNICKNAME() {
+        return NICKNAME;
     }
+    public void registrazione() // aggiungere in ()
 }
+
