@@ -12,6 +12,7 @@ public class Hackathon {
     public final int MAX_ISCRITTI;
     public final int MAX_TEAM_SIZE;
     public ArrayList<Team> Team = new ArrayList<Team>();
+    public boolean aperturaRegistrazioni = false;
 
     Hackathon(String TITOLO, String SEDE, Date INIZIO, Date FINE, int MAX_ISCRITTI, int MAX_TEAM_SIZE) {
         this.TITOLO = TITOLO;

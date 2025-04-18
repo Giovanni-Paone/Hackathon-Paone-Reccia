@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Team {
+    public final Hackathon HACKATHON;
     public String nome;
-    private final Hackathon HACKATHON;
     public ArrayList<Partecipante> partecipanti = new ArrayList<Partecipante>();
     public ArrayList<File> progressi = new ArrayList<File>();
     public short voto;
