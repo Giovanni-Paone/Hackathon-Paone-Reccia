@@ -3,16 +3,11 @@ package model;
 import java.util.List;
 
 public class Partecipante extends Utente {
+    Team team;
 
-    private List<String> inviti;
-
-
-
-    public void riceviInvito(String messaggio) {
-        inviti.add(messaggio);
+    Partecipante(Team team) {
+        this.team = team;
     }
 
-    public void invitaPartecipante(Partecipante destinatario, String messaggio) {
-        destinatario.riceviInvito(messaggio);
-    }
+    public void invitaPartecipante(Partecipante destinatario) {}
 }
