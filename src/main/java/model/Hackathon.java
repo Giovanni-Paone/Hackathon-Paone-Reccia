@@ -11,10 +11,9 @@ public class Hackathon {
     public int iscritti;
     public final int MAX_ISCRITTI;
     public final int MAX_TEAM_SIZE;
-    public ArrayList<Team> classificati = new ArrayList<Team>();
-    public short[] votiClassificati;
+    public ArrayList<Team> Team = new ArrayList<Team>();
 
-    public Hackathon(String TITOLO, String SEDE, Date INIZIO, Date FINE, int MAX_ISCRITTI, int MAX_TEAM_SIZE) {
+    Hackathon(String TITOLO, String SEDE, Date INIZIO, Date FINE, int MAX_ISCRITTI, int MAX_TEAM_SIZE) {
         this.TITOLO = TITOLO;
         this.SEDE = SEDE;
         this.INIZIO = INIZIO;
