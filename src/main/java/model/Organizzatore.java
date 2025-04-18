@@ -1,11 +1,16 @@
 package model;
 
 public class Organizzatore extends Utente {
-    private final Hackathon HACKATHON;
+    public final Hackathon HACKATHON;
+
     Organizzatore(String NICKNAME, String password,  Hackathon HACKATHON) {
         super(NICKNAME, password);
         this.HACKATHON = HACKATHON;
     }
+
     public void invito(Utente NICKNAME) {}
-    public void aperturaRegistrazione(Registrazione registrazione) {}
+
+    public void aperturaRegistrazione() {
+        this.HACKATHON.aperturaRegistrazioni = true;
+    }
 }

@@ -3,7 +3,7 @@ package model;
 import java.io.File;
 
 public class Giudice extends Utente {
-    private final Hackathon HACKATHON;
+    public final Hackathon HACKATHON;
 
     Giudice(String NICKNAME, String password, Hackathon HACKATHON) {
         super(NICKNAME, password);

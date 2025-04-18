@@ -7,7 +7,7 @@ import java.util.Date;
  * The type Utente.
  */
 public class Utente {
-    private final String NICKNAME;
+    public final String NICKNAME;
     private String password;
     public ArrayList<Date> impegni = new ArrayList();
 
@@ -17,7 +17,7 @@ public class Utente {
      * @param NICKNAME    the NICKNAME
      * @param password the password
      */
-    public Utente(String NICKNAME, String password) {
+    Utente(String NICKNAME, String password) {
         this.NICKNAME = NICKNAME;
         this.password = password;
     }
@@ -30,6 +30,7 @@ public class Utente {
     public String getNICKNAME() {
         return NICKNAME;
     }
-    public void registrazione() // aggiungere in ()
+
+    public void registrazione(Hackathon HACKATHON){} // aggiungere in ()
 }
 
