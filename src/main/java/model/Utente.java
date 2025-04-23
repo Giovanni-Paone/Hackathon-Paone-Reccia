@@ -13,11 +13,8 @@ public class Utente {
 
     /**
      * Instantiates a new Utente.
-     *
-     * @param NICKNAME    the NICKNAME
-     * @param password the password
      */
-    Utente(String NICKNAME, String password) {
+    Utente(String nickname, String password) {
         this.NICKNAME = NICKNAME;
         this.password = password;
     }
@@ -27,10 +24,8 @@ public class Utente {
      *
      * @return the login
      */
-    public String getNICKNAME() {
-        return NICKNAME;
-    }
+    public String getNICKNAME() {return NICKNAME;}
 
-    public void registrazione(Hackathon HACKATHON){} // aggiungere in ()
+    public void registrazione(Hackathon HACKATHON){} // diventa partecipante
 }
 

@@ -9,5 +9,6 @@ public class Partecipante extends Utente {
         this.team = team;
     }
 
-    public void invitaPartecipante(Partecipante destinatario) {}
+    public void invitaPartecipante(String nometeam, Partecipante destinatario) {} //crea il team se partecipante accettà
+    public void invitaPartecipante(Team team, Partecipante destinatario) {} //invita ad un team esistente
 }
