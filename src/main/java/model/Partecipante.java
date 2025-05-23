@@ -1,11 +1,13 @@
 package model;
 
+import javax.swing.*;
 import java.util.List;
 
 public class Partecipante extends Utente {
     Team team;
 
-    Partecipante(Team team) {
+    Partecipante(String NICKNAME, String password, Team team) {
+        super(NICKNAME, password);
         this.team = team;
     }
 

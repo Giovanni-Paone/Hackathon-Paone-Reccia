@@ -8,7 +8,7 @@ public class Hackathon {
     public final String SEDE;
     public final Date INIZIO;
     public final Date FINE;
-    public int iscritti;
+    private int iscritti;
     public final int MAX_ISCRITTI;
     public final int MAX_TEAM_SIZE;
     public ArrayList<Team> Team = new ArrayList<Team>();
