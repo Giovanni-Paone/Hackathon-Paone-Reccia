@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Login {
+    private static JFrame frameLogin;
     private JPanel panel1;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton loginButton;
     private JLabel iscrivitiLabel;
     private JButton iscrivitiButton;
-    private static JFrame frameLogin;
 
     public Login() {
         textField1.addActionListener(new ActionListener() {
@@ -37,7 +37,8 @@ public class Login {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                //cambio panel login
+                Iscrizione.main(null);
+                frameLogin.dispose();
             }
         });
     }
