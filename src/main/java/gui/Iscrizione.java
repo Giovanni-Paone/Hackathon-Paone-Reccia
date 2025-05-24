@@ -69,7 +69,7 @@ public class Iscrizione {
     }
 
     public static void main(String[] args) {
-        frameIscrizione = new JFrame("User Login Frame");
+        frameIscrizione = new JFrame("Iscrizione");
         frameIscrizione.setContentPane(new Iscrizione().panel1);
         frameIscrizione.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameIscrizione.setPreferredSize(new Dimension(280, 250));

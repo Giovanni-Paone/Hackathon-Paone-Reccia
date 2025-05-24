@@ -59,7 +59,7 @@ public class Login {
     }
 
     public static void main(String[] args) {
-        frameLogin = new JFrame("User Login Frame");
+        frameLogin = new JFrame("Login");
         frameLogin.setContentPane(new Login().panel1);
         frameLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameLogin.setPreferredSize(new Dimension(300, 200));

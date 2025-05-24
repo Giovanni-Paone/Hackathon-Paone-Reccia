@@ -10,7 +10,7 @@ public class Invito {
     private JLabel invitiLabel;
 
     public static void main(String[] args) {
-            frameInviti = new JFrame("User Login Frame");
+            frameInviti = new JFrame("Inviti");
             frameInviti.setContentPane(new Invito().invitoPanel);
             frameInviti.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frameInviti.setPreferredSize(new Dimension(300, 320));

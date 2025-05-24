@@ -26,8 +26,6 @@ public class Home {
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);
         frameHome.setVisible(true);
-
-
     }
 
     public Home() {
@@ -38,13 +36,22 @@ public class Home {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                CreazioneHackathon.main(null);
+                //CreazioneHackathon.main(null);
             }
         });
         creaHackathonButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+            }
+        });
+        cercaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int risposta = JOptionPane.showConfirmDialog(null, "Sei sicuro?", "Conferma",  JOptionPane.OK_CANCEL_OPTION);
+                if (risposta == JOptionPane.OK_OPTION) {
+                    //entra nell'hackathon se permesso
+                }
             }
         });
     }
