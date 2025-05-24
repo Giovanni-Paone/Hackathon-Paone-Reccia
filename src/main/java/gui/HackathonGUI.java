@@ -36,7 +36,7 @@ public class HackathonGUI {
         frameHackathon = new JFrame("Hackathon");
         frameHackathon.setContentPane(new HackathonGUI().hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frameHackathon.setPreferredSize(new Dimension(400, 300));
+        frameHackathon.setPreferredSize(new Dimension(400, 370));
         frameHackathon.setResizable(false);
         frameHackathon.pack();
         frameHackathon.setLocationRelativeTo(null);
