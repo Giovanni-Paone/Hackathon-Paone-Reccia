@@ -4,9 +4,16 @@ import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Home {
     private JPanel mainPanel;
+    private JTextField searchBar;
+    private JButton cercaButton;
+    private JScrollBar scrollBar1;
+    private JButton notificaButton;
+    private JButton creaHackathonButton;
     private static JFrame frameHome;
     private Controller controller;
 
@@ -19,14 +26,34 @@ public class Home {
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);
         frameHome.setVisible(true);
-
-
     }
 
     public Home() {
         controller = new Controller();
         // Add action listeners or other initialization code here
 
+        notificaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                //CreazioneHackathon.main(null);
+            }
+        });
+        creaHackathonButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+            }
+        });
+        cercaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int risposta = JOptionPane.showConfirmDialog(null, "Sei sicuro?", "Conferma",  JOptionPane.OK_CANCEL_OPTION);
+                if (risposta == JOptionPane.OK_OPTION) {
+                    //entra nell'hackathon se permesso
+                }
+            }
+        });
     }
 
 
