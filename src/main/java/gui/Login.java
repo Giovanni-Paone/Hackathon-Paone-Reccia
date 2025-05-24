@@ -9,7 +9,9 @@ public class Login {
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton loginButton;
-    private JFrame frame;
+    private JLabel iscrivitiLabel;
+    private JButton iscrivitiButton;
+    private static JFrame frameLogin;
 
     public Login() {
         textField1.addActionListener(new ActionListener() {
@@ -31,6 +33,13 @@ public class Login {
                 eseguiLogin();
             }
         });
+        iscrivitiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                //cambio panel login
+            }
+        });
     }
 
     private void eseguiLogin() {
@@ -43,18 +52,19 @@ public class Login {
                     "Errore di login",
                     JOptionPane.ERROR_MESSAGE);
         } else {
-            //apriNuovaScheda();
+            Home.main(null);
+            frameLogin.dispose();
         }
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("User Login Frame");
-        frame.setContentPane(new Login().panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setPreferredSize(new Dimension(300, 200));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frameLogin = new JFrame("User Login Frame");
+        frameLogin.setContentPane(new Login().panel1);
+        frameLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameLogin.setPreferredSize(new Dimension(300, 200));
+        frameLogin.setResizable(false);
+        frameLogin.pack();
+        frameLogin.setLocationRelativeTo(null);
+        frameLogin.setVisible(true);
     }
 }

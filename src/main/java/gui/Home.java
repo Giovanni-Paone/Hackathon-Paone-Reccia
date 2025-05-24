@@ -3,6 +3,7 @@ package gui;
 import controller.Controller;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Home {
     private JPanel mainPanel;
@@ -13,7 +14,10 @@ public class Home {
         frameHome = new JFrame("Home");
         frameHome.setContentPane(new Home().mainPanel);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameHome.setPreferredSize(new Dimension(300, 200));
+        frameHome.setResizable(false);
         frameHome.pack();
+        frameHome.setLocationRelativeTo(null);
         frameHome.setVisible(true);
 
 
