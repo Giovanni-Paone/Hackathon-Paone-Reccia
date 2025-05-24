@@ -7,14 +7,16 @@ import java.awt.event.*;
 public class Login {
     private static JFrame frameLogin;
     private JPanel panel1;
-    private JTextField textField1;
+    private JTextField usernameTextField;
     private JPasswordField passwordField1;
     private JButton loginButton;
     private JLabel iscrivitiLabel;
     private JButton iscrivitiButton;
+    private JLabel usernameLabel;
+    private JLabel passwordLabel;
 
     public Login() {
-        textField1.addActionListener(new ActionListener() {
+        usernameTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 passwordField1.requestFocusInWindow();
@@ -44,7 +46,7 @@ public class Login {
     }
 
     private void eseguiLogin() {
-        String username = textField1.getText();
+        String username = usernameTextField.getText();
         String password = new String(passwordField1.getPassword());
 
         if (username.length() < 5 || password.length() < 5) {

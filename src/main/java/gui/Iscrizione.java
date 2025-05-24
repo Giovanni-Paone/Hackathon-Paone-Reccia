@@ -10,12 +10,13 @@ import java.awt.event.MouseEvent;
 public class Iscrizione {
     private static JFrame frameIscrizione;
     private JPanel panel1;
-    private JLabel UsernameLabel;
+    private JLabel usernameLabel;
     private JTextField UsernameText;
     private JLabel passwordLabel;
     private JPasswordField passwordField1;
     private JPasswordField passwordField2;
     private JButton iscrivitiButton;
+    private JLabel confermaPasswordLabel;
 
     public Iscrizione() {
         UsernameText.addActionListener(new ActionListener() {
