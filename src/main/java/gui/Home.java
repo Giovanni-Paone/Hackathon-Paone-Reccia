@@ -9,25 +9,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Home {
+    private static JFrame frameHome;
     private JPanel mainPanel;
     private JTextField searchBar;
     private JButton cercaButton;
     private JScrollBar scrollBar1;
     private JButton notificaButton;
     private JButton creaHackathonButton;
-    private static JFrame frameHome;
     private Controller controller;
-
-    public static void main(String[] args) {
-        frameHome = new JFrame("Home");
-        frameHome.setContentPane(new Home().mainPanel);
-        frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameHome.setPreferredSize(new Dimension(300, 350));
-        frameHome.setResizable(false);
-        frameHome.pack();
-        frameHome.setLocationRelativeTo(null);
-        frameHome.setVisible(true);
-    }
 
     public Home() {
         controller = new Controller();
@@ -58,4 +47,14 @@ public class Home {
     }
 
 
+    public static void main(String[] args) {
+        frameHome = new JFrame("Home");
+        frameHome.setContentPane(new Home().mainPanel);
+        frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameHome.setPreferredSize(new Dimension(300, 350));
+        frameHome.setResizable(false);
+        frameHome.pack();
+        frameHome.setLocationRelativeTo(null);
+        frameHome.setVisible(true);
+    }
 }

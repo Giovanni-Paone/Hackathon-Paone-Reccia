@@ -16,6 +16,7 @@ public class HackathonGUI {
     private JLabel postiRimanentiLabel;
     private JLabel dimensioneMassimaTeamLabel;
     private JButton iscrivitiButton;
+    private JScrollBar scrollBar1;
 
     public HackathonGUI() {
         iscrivitiButton.addMouseListener(new MouseAdapter() {
