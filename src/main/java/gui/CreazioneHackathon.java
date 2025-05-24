@@ -66,7 +66,7 @@ public class CreazioneHackathon {
     public static void main(String[] args) {
         frameCreazioneHackathon = new JFrame("Creazione Hackathon");
         frameCreazioneHackathon.setContentPane(new CreazioneHackathon().creazioneHackathonPanel);
-        frameCreazioneHackathon.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameCreazioneHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameCreazioneHackathon.setPreferredSize(new Dimension(400, 450));
         frameCreazioneHackathon.setResizable(false);
         frameCreazioneHackathon.pack();

@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.Hackathon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +22,7 @@ public class Home {
         frameHome = new JFrame("Home");
         frameHome.setContentPane(new Home().mainPanel);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameHome.setPreferredSize(new Dimension(300, 200));
+        frameHome.setPreferredSize(new Dimension(300, 350));
         frameHome.setResizable(false);
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);
@@ -36,21 +37,21 @@ public class Home {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                //CreazioneHackathon.main(null);
+                Invito.main(null);
             }
         });
         creaHackathonButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                CreazioneHackathon.main(null);
             }
         });
         cercaButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int risposta = JOptionPane.showConfirmDialog(null, "Sei sicuro?", "Conferma",  JOptionPane.OK_CANCEL_OPTION);
-                if (risposta == JOptionPane.OK_OPTION) {
-                    //entra nell'hackathon se permesso
+                if(2==2) { //controlla se esiste hackathon
+                    HackathonGUI.main(null);
                 }
             }
         });

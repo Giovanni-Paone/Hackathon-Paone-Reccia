@@ -12,7 +12,7 @@ public class Invito {
     public static void main(String[] args) {
             frameInviti = new JFrame("Inviti");
             frameInviti.setContentPane(new Invito().invitoPanel);
-            frameInviti.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frameInviti.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frameInviti.setPreferredSize(new Dimension(300, 320));
             frameInviti.setResizable(true);
             frameInviti.pack();
