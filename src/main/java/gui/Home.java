@@ -51,7 +51,7 @@ public class Home {
         frameHome = new JFrame("Home");
         frameHome.setContentPane(new Home().mainPanel);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameHome.setPreferredSize(new Dimension(300, 350));
+        frameHome.setPreferredSize(new Dimension(350, 350));
         frameHome.setResizable(false);
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);

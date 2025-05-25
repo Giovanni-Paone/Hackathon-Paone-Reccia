@@ -139,12 +139,11 @@
           <text value="Invita Giudici"/>
         </properties>
       </component>
-      <component id="762d6" class="javax.swing.JScrollBar" binding="scrollBar1" default-binding="true">
+      <vspacer id="ed6f2">
         <constraints>
-          <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="0" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
-      </component>
+      </vspacer>
     </children>
   </grid>
 </form>

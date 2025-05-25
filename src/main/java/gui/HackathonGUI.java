@@ -16,7 +16,6 @@ public class HackathonGUI {
     private JLabel postiRimanentiLabel;
     private JLabel dimensioneMassimaTeamLabel;
     private JButton iscrivitiButton;
-    private JScrollBar scrollBar1;
     private JProgressBar progressBar1;
 
     public HackathonGUI() {
@@ -37,7 +36,7 @@ public class HackathonGUI {
         frameHackathon = new JFrame("Hackathon");
         frameHackathon.setContentPane(new HackathonGUI().hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frameHackathon.setPreferredSize(new Dimension(400, 370));
+        frameHackathon.setPreferredSize(new Dimension(450, 400));
         frameHackathon.setResizable(false);
         frameHackathon.pack();
         frameHackathon.setLocationRelativeTo(null);

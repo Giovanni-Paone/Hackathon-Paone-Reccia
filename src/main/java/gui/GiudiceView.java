@@ -17,7 +17,6 @@ public class GiudiceView {
     private JLabel dimensioniMassimeTeamLabel;
     private JScrollBar scrollBar1;
     private JLabel giudiciLabel;
-    private JScrollBar scrollBar2;
 
     public static void main(String[] args) {
         frameGiudiceView = new JFrame("Hackathon");

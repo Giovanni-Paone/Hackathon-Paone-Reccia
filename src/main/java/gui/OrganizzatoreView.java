@@ -13,7 +13,6 @@ public class OrganizzatoreView {
     private JLabel dataInizioLabel;
     private JLabel dataFineLabel;
     private JLabel giudiciLabel;
-    private JScrollBar scrollBar1;
     private JLabel dimensioneMassimaTeamLabel;
     private JProgressBar progressBar1;
     private JButton apriIscrizioniButton;
@@ -43,7 +42,7 @@ public class OrganizzatoreView {
         frameOrganizzatoreView = new JFrame("Hackathon");
         frameOrganizzatoreView.setContentPane(new OrganizzatoreView().organizzatorePanel);
         frameOrganizzatoreView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frameOrganizzatoreView.setPreferredSize(new Dimension(400, 400));
+        frameOrganizzatoreView.setPreferredSize(new Dimension(450, 450));
         frameOrganizzatoreView.setResizable(false);
         frameOrganizzatoreView.pack();
         frameOrganizzatoreView.setLocationRelativeTo(null);
