@@ -60,12 +60,18 @@ public class Iscrizione {
                     JOptionPane.ERROR_MESSAGE);
         }
         else {
-            JOptionPane.showMessageDialog(panel1,
-                    "Account creato con successo.",
-                    "Successo",
+            int risposta = JOptionPane.showConfirmDialog(panel1,
+                    "Sei sicuro dei dati inseriti?",
+                    "Conferma",
                     JOptionPane.INFORMATION_MESSAGE);
-            Login.main(null);
-            frameIscrizione.dispose();
+            if(risposta==JOptionPane.OK_OPTION) {
+                JOptionPane.showMessageDialog(panel1,
+                        "Account creato con successo.",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
+                Login.main(null);
+                frameIscrizione.dispose();
+            }
         }
     }
 

@@ -57,8 +57,14 @@ public class CreazioneHackathon {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                HackathonGUI.main(null);
-                frameCreazioneHackathon.dispose();
+                int risposta = JOptionPane.showConfirmDialog(creazioneHackathonPanel,
+                        "Sei sicuro dei dati inseriti?",
+                        "Conferma",
+                        JOptionPane.INFORMATION_MESSAGE);
+                if(risposta==JOptionPane.OK_OPTION){
+                    OrganizzatoreView.main(null);
+                    frameCreazioneHackathon.dispose();
+                }
             }
         });
     }
