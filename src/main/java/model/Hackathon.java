@@ -8,19 +8,31 @@ public class Hackathon {
     public final String SEDE;
     public final Date INIZIO;
     public final Date FINE;
-    private int iscritti;
+    private int teamIscritti;
     public final int MAX_ISCRITTI;
     public final int MAX_TEAM_SIZE;
-    public ArrayList<Team> Team = new ArrayList<Team>();
-    public boolean aperturaRegistrazioni = false;
+    private ArrayList<Team> Team = new ArrayList<Team>();
+    private boolean aperturaRegistrazioni = false;
 
     Hackathon(String TITOLO, String SEDE, Date INIZIO, Date FINE, int MAX_ISCRITTI, int MAX_TEAM_SIZE) {
         this.TITOLO = TITOLO;
         this.SEDE = SEDE;
         this.INIZIO = INIZIO;
         this.FINE = FINE;
-        this.iscritti = 0;
+        this.teamIscritti = 0;
         this.MAX_ISCRITTI = MAX_ISCRITTI;
         this.MAX_TEAM_SIZE = MAX_TEAM_SIZE;
     }
+
+    public void addTeamIscritti() {this.teamIscritti++;}
+
+    public Team getTeamIscritti(int numero) {return Team.get(numero-1);}
+
+    public void addTeam(Team team) {this.Team.add(team);}
+
+    public boolean getAperturaRegistrazioni() {return aperturaRegistrazioni;}
+
+    public void apriRegistrazioni() {this.aperturaRegistrazioni = true;}
+
+    public void rimuoviImpegni() {}
 }
