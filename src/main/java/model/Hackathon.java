@@ -26,7 +26,7 @@ public class Hackathon {
 
     public void addTeamIscritti() {this.teamIscritti++;}
 
-    public Team getTeamIscritti(int numero) {return Team.get(numero-1);}
+    public Team getTeamIscritti(int indice) {return Team.get(indice);}
 
     public void addTeam(Team team) {this.Team.add(team);}
 

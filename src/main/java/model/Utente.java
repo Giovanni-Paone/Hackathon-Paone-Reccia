@@ -25,38 +25,26 @@ public class Utente {
      *
      * @return the login
      */
+    public Invito getInvito(int indice){return inviti.get(indice);}
+    public Invito getInvitoLast(){return inviti.getLast();}
 
     public void aggiungiInvito(Invito Invito){
         inviti.add(Invito);
     }
-    public Invito returnInvito(int indice){return inviti.get(indice);}
 
-    public void addImpegnoFirst(Hackathon hackathon, String ruolo, Date dataInizio, Date datFine){
-        Impegno nuovoImpegno = new Impegno(dataInizio, datFine, ruolo, hackathon);
-        this.impegni.addFirst(nuovoImpegno);
-    }
+    public Impegno getImpegno(int indice){return this.impegni.get(indice);}
+    public Impegno getImpegnoLast(){return this.impegni.getLast();}
 
-    public void addImpegno(Hackathon hackathon, String ruolo, Date dataInizio, Date datFine){
-        Impegno nuovoImpegno = new Impegno(dataInizio, datFine, ruolo, hackathon);
-        this.impegni.add(nuovoImpegno);
-    }
-
-    public void addImpegno(int indice, Hackathon hackathon, String ruolo, Date dataInizio, Date datFine){
-        Impegno nuovoImpegno = new Impegno(dataInizio, datFine, ruolo, hackathon);
-        this.impegni.add(indice, nuovoImpegno);
-    }
-
-    public Impegno returnImpegno(){return this.impegni.getFirst();}
-
-    public Impegno returnImpegno(int indice){return this.impegni.get(indice);}
-
-    public void controllaDisponibilità(Hackathon hackathon, String ruolo, Date nuovoDataInizio, Date nuovoDatFine){
+    public void addImpegno(Hackathon hackathon, String ruolo, Date nuovoDataInizio, Date nuovoDatFine){
         if (this.impegni.isEmpty()){
-            addImpegno(hackathon, ruolo, nuovoDataInizio, nuovoDatFine);
+            Impegno nuovoImpegno = new Impegno(nuovoDataInizio, nuovoDatFine, ruolo, hackathon);
+            this.impegni.add(nuovoImpegno);
+            return;
         }
 
         if (nuovoDatFine.before(this.impegni.getFirst().dataInizio)){
-            addImpegnoFirst(hackathon, ruolo, nuovoDataInizio, nuovoDatFine);
+            Impegno nuovoImpegno = new Impegno(nuovoDataInizio, nuovoDatFine, ruolo, hackathon);
+            return;
         }
 
         for (int i=0; i<this.impegni.size()-1; i++) {
@@ -64,13 +52,16 @@ public class Utente {
                     nuovoDatFine.equals(this.impegni.get(i).dataFine)){
                 if (Objects.equals(this.impegni.get(i).hackathon, hackathon)) {
                     //sei già giudice o organizzatore, vedere e dillo
+                    return;
                 }
                 else return; //sei impegnato, fa qualcosa
             }
 
             if(nuovoDataInizio.after(this.impegni.get(i).dataFine) &&
                     nuovoDatFine.before(this.impegni.get(i+1).dataInizio)){
-                addImpegno(i, hackathon, ruolo, nuovoDataInizio, nuovoDatFine);
+                Impegno nuovoImpegno = new Impegno(nuovoDataInizio, nuovoDatFine, ruolo, hackathon);
+                this.impegni.add(i, nuovoImpegno);
+                return;
             }
         }
 
@@ -78,13 +69,15 @@ public class Utente {
                 nuovoDatFine.equals(this.impegni.getLast().dataFine)){
             if (Objects.equals(this.impegni.getLast().hackathon, hackathon)) {
                 //sei già giudice o organizzatore, vedere e dillo
+                return;
             }
             else return; //sei impegnato, fa qualcosa
         }
 
         if(nuovoDataInizio.after(this.impegni.getLast().dataFine)) {
-            addImpegno(hackathon, ruolo, nuovoDataInizio, nuovoDatFine);
-        }
+            Impegno nuovoImpegno = new Impegno(nuovoDataInizio, nuovoDatFine, ruolo, hackathon);
+            this.impegni.add(nuovoImpegno);
+        }//se non è stato aggiiunto è perchè non è presente un arco di tempo in cui è disponibile
     }
 
     public void registrazione(Hackathon HACKATHON, Date nuovoDataInizio, Date nuovoDataFine){} // diventa partecipante se è disponibile
@@ -95,4 +88,3 @@ public class Utente {
 
     public void rifiutaInvito(){}
 }
-
