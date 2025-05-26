@@ -15,7 +15,7 @@ public class Utente {
     /**
      * Instantiates a new Utente.
      */
-    Utente(String USERNAME, String password) {
+    public Utente(String USERNAME, String password) {
         this.USERNAME = USERNAME;
         this.password = password;
     }

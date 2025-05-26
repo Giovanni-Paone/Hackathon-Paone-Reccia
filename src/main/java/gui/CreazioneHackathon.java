@@ -1,5 +1,7 @@
 package gui;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,22 +9,36 @@ import java.awt.event.*;
 public class CreazioneHackathon {
     private static JFrame frameCreazioneHackathon;
     private JPanel creazioneHackathonPanel;
-    private JFormattedTextField dataFineformattedTextField;
-    private JFormattedTextField dataInizioFormattedTextField;
+    private JLabel titoloLabel;
     private JTextField titoloTextField;
+    private JLabel sedeLabel;
     private JTextField sedeTextField;
+    private JLabel dataInizioLabel;
+    private JSpinner dataInizioSpinner;
+    private JLabel dataFineLabel;
+    private JSpinner dataFineSpinner;
+    private JLabel limiteIscrittiLabel;
     private JSpinner limiteIscrittiSpinner;
     private JLabel limiteComponentiSquadreLabel;
     private JSpinner limiteComponentiSquadreSpinner;
     private JButton creaButton;
     private JLabel creaHackathonLabel;
-    private JLabel titoloLabel;
-    private JLabel sedeLabel;
-    private JLabel dataInizioLabel;
-    private JLabel dataFineLabel;
-    private JLabel limiteIscrittiLabel;
 
-    public CreazioneHackathon() {
+    public JFrame getFrameCreazioneHackathon() {return frameCreazioneHackathon;}
+    public JPanel getCreazioneHackathonPanel() {return creazioneHackathonPanel;}
+    public JTextField getTitoloTextField() {return titoloTextField; }
+    public JTextField getSedeTextField() {return sedeTextField; }
+    public JSpinner getDataInizioSpinner() {return dataInizioSpinner; }
+    public JSpinner getDataFineSpinner() {return dataFineSpinner; }
+    public JSpinner getLimiteIscrittiSpinner() { return limiteIscrittiSpinner; }
+    public JSpinner getLimiteComponentiSquadreSpinner() { return limiteComponentiSquadreSpinner; }
+
+    public CreazioneHackathon(Controller controller) {
+            dataInizioSpinner.setModel(new SpinnerDateModel());
+            dataInizioSpinner.setEditor(new JSpinner.DateEditor(dataInizioSpinner, "dd/MM/yyyy"));
+
+            dataFineSpinner.setModel(new SpinnerDateModel());
+            dataFineSpinner.setEditor(new JSpinner.DateEditor(dataFineSpinner, "dd/MM/yyyy"));
 
         titoloTextField.addActionListener(new ActionListener() {
             @Override
@@ -34,44 +50,21 @@ public class CreazioneHackathon {
         });
         sedeTextField.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) { dataInizioFormattedTextField.requestFocus();
-            }
-        });
-        dataInizioFormattedTextField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(2==2) { //sei libero
-                    dataFineformattedTextField.requestFocus();
-                }
-            }
-        });
-        dataFineformattedTextField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(2==2) { //sei libero
-                    limiteIscrittiSpinner.requestFocus();
-                }
+            public void actionPerformed(ActionEvent e) { dataInizioSpinner.requestFocus();
             }
         });
         creaButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                int risposta = JOptionPane.showConfirmDialog(creazioneHackathonPanel,
-                        "Sei sicuro dei dati inseriti?",
-                        "Conferma",
-                        JOptionPane.INFORMATION_MESSAGE);
-                if(risposta==JOptionPane.OK_OPTION){
-                    OrganizzatoreView.main(null);
-                    frameCreazioneHackathon.dispose();
-                }
+                controller.creaHackathon(CreazioneHackathon.this);
             }
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args, Controller controller) {
         frameCreazioneHackathon = new JFrame("Creazione Hackathon");
-        frameCreazioneHackathon.setContentPane(new CreazioneHackathon().creazioneHackathonPanel);
+        frameCreazioneHackathon.setContentPane(new CreazioneHackathon(controller).creazioneHackathonPanel);
         frameCreazioneHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameCreazioneHackathon.setPreferredSize(new Dimension(400, 450));
         frameCreazioneHackathon.setResizable(false);

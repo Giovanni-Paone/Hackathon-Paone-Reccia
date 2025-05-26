@@ -1,5 +1,7 @@
 package gui;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,7 +17,12 @@ public class Login {
     private JLabel usernameLabel;
     private JLabel passwordLabel;
 
-    public Login() {
+    public JFrame getFrameLogin() {return frameLogin;}
+    public JPanel getPanel1() {return panel1;}
+    public JTextField getUsernameTextField() {return usernameTextField;}
+    public JPasswordField getPasswordField1() {return passwordField1;}
+
+    public Login(Controller controller) {
         usernameTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -25,44 +32,30 @@ public class Login {
         passwordField1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                eseguiLogin();
+                controller.eseguiLogin(Login.this);
             }
         });
         loginButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                eseguiLogin();
+                controller.eseguiLogin(Login.this);
             }
         });
         iscrivitiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Iscrizione.main(null);
+                Iscrizione.main(null, controller);
                 frameLogin.dispose();
             }
         });
     }
 
-    private void eseguiLogin() {
-        String username = usernameTextField.getText();
-        String password = new String(passwordField1.getPassword());
-
-        if (username.length() < 5 || password.length() < 5) {
-            JOptionPane.showMessageDialog(panel1,
-                    "Username e Password devono contenere almeno 5 caratteri.",
-                    "Errore di login",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            Home.main(null);
-            frameLogin.dispose();
-        }
-    }
-
     public static void main(String[] args) {
+        Controller controller = new Controller();
         frameLogin = new JFrame("Login");
-        frameLogin.setContentPane(new Login().panel1);
+        frameLogin.setContentPane(new Login(controller).panel1);
         frameLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameLogin.setPreferredSize(new Dimension(300, 200));
         frameLogin.setResizable(false);

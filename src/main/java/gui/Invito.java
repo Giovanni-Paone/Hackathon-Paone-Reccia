@@ -1,5 +1,7 @@
 package gui;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,9 +11,11 @@ public class Invito {
     private JScrollBar scrollBar1;
     private JLabel invitiLabel;
 
-    public static void main(String[] args) {
+    public Invito(Controller controller) {}
+
+    public static void main(String[] args, Controller controller) {
             frameInviti = new JFrame("Inviti");
-            frameInviti.setContentPane(new Invito().invitoPanel);
+            frameInviti.setContentPane(new Invito(controller).invitoPanel);
             frameInviti.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frameInviti.setPreferredSize(new Dimension(300, 320));
             frameInviti.setResizable(true);

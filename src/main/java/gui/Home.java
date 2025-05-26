@@ -1,7 +1,6 @@
 package gui;
 
 import controller.Controller;
-import model.Hackathon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,44 +13,42 @@ public class Home {
     private JTextField searchBar;
     private JButton cercaButton;
     private JScrollBar scrollBar1;
-    private JButton notificaButton;
+    private JButton areaPersonaleButton;
     private JButton creaHackathonButton;
     private Controller controller;
 
-    public Home() {
-        controller = new Controller();
-        // Add action listeners or other initialization code here
+    public Home(Controller controller) {
 
-        notificaButton.addMouseListener(new MouseAdapter() {
+        areaPersonaleButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Invito.main(null);
+                AreaPersonale.main(null, controller);
             }
         });
         creaHackathonButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                CreazioneHackathon.main(null);
+                CreazioneHackathon.main(null, controller);
             }
         });
         cercaButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(2==2) { //controlla se esiste hackathon
-                    HackathonGUI.main(null);
+                    HackathonGUI.main(null, controller);
                 }
             }
         });
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args, Controller controller) {
         frameHome = new JFrame("Home");
-        frameHome.setContentPane(new Home().mainPanel);
+        frameHome.setContentPane(new Home(controller).mainPanel);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameHome.setPreferredSize(new Dimension(350, 350));
+        frameHome.setPreferredSize(new Dimension(400, 350));
         frameHome.setResizable(false);
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);

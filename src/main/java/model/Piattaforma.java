@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Piattaforma {
     public final ArrayList<Hackathon> HACKATHON = new ArrayList<Hackathon>();
 
-    Piattaforma(){}
+    public Piattaforma(){}
 
     public void creaClassifica(){}
 }

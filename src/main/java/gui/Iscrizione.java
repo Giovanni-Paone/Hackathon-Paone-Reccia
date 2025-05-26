@@ -1,5 +1,7 @@
 package gui;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +20,14 @@ public class Iscrizione {
     private JButton iscrivitiButton;
     private JLabel confermaPasswordLabel;
 
-    public Iscrizione() {
+    public JFrame getFrameIscrizione() {return frameIscrizione;}
+    public JPanel getPanel1() {return panel1;}
+    public JTextField getUsernameText() {return UsernameText;}
+    public JPasswordField getPasswordField1() {return passwordField1;}
+    public JPasswordField getPasswordField2() {return passwordField2;}
+
+
+    public Iscrizione(Controller controller) {
         UsernameText.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {passwordField1.requestFocus();}
@@ -31,53 +40,22 @@ public class Iscrizione {
         passwordField2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                eseguiIscrizione();
+                controller.eseguiIscrizione(Iscrizione.this);
             }
         });
         iscrivitiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                eseguiIscrizione();
+                controller.eseguiIscrizione(Iscrizione.this);
             }
         });
     }
 
-    private void eseguiIscrizione() {
-        String username = UsernameText.getText();
-        String password = new String(passwordField1.getPassword());
-        String conferma = new String(passwordField2.getPassword());
 
-        if (!password.equals(conferma)) {
-            JOptionPane.showMessageDialog(panel1, "Password e conferma sono diversi",
-                    "Errore di login",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        else if (username.length() < 5 || password.length() < 5) {
-            JOptionPane.showMessageDialog(panel1,
-                    "Username e Password devono contenere almeno 5 caratteri.",
-                    "Errore di login",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        else {
-            int risposta = JOptionPane.showConfirmDialog(panel1,
-                    "Sei sicuro dei dati inseriti?",
-                    "Conferma",
-                    JOptionPane.INFORMATION_MESSAGE);
-            if(risposta==JOptionPane.OK_OPTION) {
-                JOptionPane.showMessageDialog(panel1,
-                        "Account creato con successo.",
-                        "Successo",
-                        JOptionPane.INFORMATION_MESSAGE);
-                Login.main(null);
-                frameIscrizione.dispose();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args, Controller controller) {
         frameIscrizione = new JFrame("Iscrizione");
-        frameIscrizione.setContentPane(new Iscrizione().panel1);
+        frameIscrizione.setContentPane(new Iscrizione(controller).panel1);
         frameIscrizione.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameIscrizione.setPreferredSize(new Dimension(280, 250));
         frameIscrizione.setResizable(true);

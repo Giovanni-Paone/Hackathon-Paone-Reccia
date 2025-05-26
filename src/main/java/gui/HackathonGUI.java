@@ -1,5 +1,7 @@
 package gui;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -18,7 +20,7 @@ public class HackathonGUI {
     private JButton iscrivitiButton;
     private JProgressBar progressBar1;
 
-    public HackathonGUI() {
+    public HackathonGUI(Controller controller) {
         iscrivitiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -32,9 +34,9 @@ public class HackathonGUI {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args, Controller controller) {
         frameHackathon = new JFrame("Hackathon");
-        frameHackathon.setContentPane(new HackathonGUI().hackathonPanel);
+        frameHackathon.setContentPane(new HackathonGUI(controller).hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameHackathon.setPreferredSize(new Dimension(450, 400));
         frameHackathon.setResizable(false);
