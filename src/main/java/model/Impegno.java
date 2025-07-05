@@ -3,15 +3,11 @@ package model;
 import java.util.Date;
 
 public class Impegno {
-    public Date dataInizio = new Date();
-    public Date dataFine = new Date();
-    public String ruolo = new String();
     public Hackathon hackathon;
+    public int ruolo;
 
-    public Impegno(Date dataInizio, Date dataFine, String ruolo, Hackathon hackathon) {
-        this.dataInizio = dataInizio;
-        this.dataFine = dataFine;
-        this.ruolo = ruolo;
+    public Impegno(Hackathon hackathon, int ruolo) {
         this.hackathon = hackathon;
+        this.ruolo = ruolo;
     }
 }

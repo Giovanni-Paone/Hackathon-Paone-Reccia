@@ -3,17 +3,18 @@ package model;
 import java.util.Date;
 
 public class Invito {
-    public Utente giudice;
     public Hackathon hackathon;
-    public Date dataInizio;
-    public Date dataFine;
     public Date dataInvito;
+    Team team;
 
-    public Invito(Utente giudice, Hackathon hackathon, Date dataInizio, Date dataFine) {
-        this.giudice = giudice;
+    public Invito(Hackathon hackathon) {
         this.hackathon = hackathon;
-        this.dataInizio = dataInizio;
-        this.dataFine = dataFine;
+        //aggiungere ad invito la data seguente
+    }
+
+    public Invito(Hackathon hackathon, Team team) {
+        this.hackathon = hackathon;
+        this.team = team;
         //aggiungere ad invito la data seguente
     }
 }

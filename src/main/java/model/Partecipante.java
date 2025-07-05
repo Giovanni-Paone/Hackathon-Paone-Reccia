@@ -6,6 +6,11 @@ import java.util.List;
 public class Partecipante extends Utente {
     Team team;
 
+
+    Partecipante(String NICKNAME, String password) {
+        super(NICKNAME, password);
+    }
+
     Partecipante(String NICKNAME, String password, Team team) {
         super(NICKNAME, password);
         this.team = team;
