@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 public class Team {
     public final Hackathon HACKATHON;
-    public String nome;
-    public ArrayList<Partecipante> partecipanti = new ArrayList<Partecipante>();
-    public ArrayList<File> progressi = new ArrayList<File>();
-    public short voto;
+    public final String NOME_TEAM;
+    public final ArrayList<Partecipante> partecipanti = new ArrayList<Partecipante>();
+    private ArrayList<File> progressi = new ArrayList<File>();
+    private int voto;
 
-    Team(String nome, Hackathon HACKATHON, Partecipante creatore) {
-        this.nome = nome;
-        this.HACKATHON = HACKATHON;
+    Team(String nomeTeam, Hackathon hackathon, Partecipante creatore) {
+        this.NOME_TEAM = nomeTeam;
+        this.HACKATHON = hackathon;
         this.partecipanti.add(creatore);
     }
 

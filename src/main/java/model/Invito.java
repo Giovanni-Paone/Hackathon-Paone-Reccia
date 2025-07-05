@@ -1,20 +1,14 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class Invito {
-    public Hackathon hackathon;
-    public Date dataInvito;
-    Team team;
+public abstract class Invito {
+    private final String MESSAGGIO;
+    public final LocalDateTime DATA_INVITO;
 
-    public Invito(Hackathon hackathon) {
-        this.hackathon = hackathon;
-        //aggiungere ad invito la data seguente
+    public Invito(String messaggio) {
+        this.MESSAGGIO = messaggio;
+        this.DATA_INVITO = LocalDateTime.now();
     }
 
-    public Invito(Hackathon hackathon, Team team) {
-        this.hackathon = hackathon;
-        this.team = team;
-        //aggiungere ad invito la data seguente
-    }
 }

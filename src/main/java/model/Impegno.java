@@ -3,11 +3,11 @@ package model;
 import java.util.Date;
 
 public class Impegno {
-    public Hackathon hackathon;
-    public int ruolo;
+    public final Hackathon HACKATHON;
+    public final int RUOLO;
 
     public Impegno(Hackathon hackathon, int ruolo) {
-        this.hackathon = hackathon;
-        this.ruolo = ruolo;
+        this.HACKATHON = hackathon;
+        this.RUOLO = ruolo;
     }
 }

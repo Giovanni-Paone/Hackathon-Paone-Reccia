@@ -10,7 +10,5 @@ public class Organizzatore extends Utente {
 
     public void invito(Utente NICKNAME) {}
 
-    public void aperturaRegistrazione() {
-        this.HACKATHON.apriRegistrazioni();
-    }
+    public void aperturaRegistrazione() {this.HACKATHON.apriRegistrazioni();}
 }
