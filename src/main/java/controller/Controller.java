@@ -1,7 +1,7 @@
 package controller;
 
 import gui.*;
-import gui.Partecipante;
+import gui.PartecipanteView;
 import model.*;
 import model.Hackathon;
 
@@ -68,7 +68,7 @@ public class Controller {
                 case(2):
                     //creare hackathon
                     //Partecipante partecipante = new Partecipante(username, hackathon)
-                    Partecipante.main(null,  this);
+                    PartecipanteView.main(null,  this);
                     login.getFrameLogin().dispose();
                     break;
                 case(3):
@@ -120,11 +120,33 @@ public class Controller {
 
 
     public void guardaHackathon(Home home) {
-        if(2==2) { //controlla se c'è un hackathon corrente
+        if (2 == 2) { //controlla se c'è un hackathon corrente
             IscrizioneHackathon.main(null, this);
+        } else {
+            JOptionPane.showMessageDialog(home.getHomePanel(),
+                    "Non è presente nessun hackathon in corso",
+                    "Hackathon",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void guardaHackathon(GiudiceHome giudiceHome) {
+        if(2==2) { //controlla se c'è un hackathon corrente
+                IscrizioneHackathon.main(null, this);
         }
         else {
-            JOptionPane.showMessageDialog(home.getHomePanel(),
+            JOptionPane.showMessageDialog(giudiceHome.getGiudiceHomePanel(),
+                    "Non è presente nessun hackathon in corso",
+                    "Hackathon",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void guardaHackathon(OrganizzatoreHome organizzatoreHome) {
+        if (2 == 2) { //controlla se c'è un hackathon corrente
+            IscrizioneHackathon.main(null, this);
+        } else {
+            JOptionPane.showMessageDialog(organizzatoreHome.getOrganizzatoreHomePanel(),
                     "Non è presente nessun hackathon in corso",
                     "Hackathon",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -133,7 +155,7 @@ public class Controller {
 
     public void precedentiHackathon() {
         //prendere dalla base di dati il precedente
-        PrevHackathon.main(null, this);
+        //PrevHackathon.main(null, this);
     }
 
     public void visualizzaTeam() {

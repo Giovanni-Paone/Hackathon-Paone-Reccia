@@ -22,6 +22,9 @@ public class OrganizzatoreView {
     private JButton invitaGiudiciButton;
     private JButton effettuaCambiamentiButton;
     private JButton precedentiButton;
+    private JScrollBar scrollBar1;
+    private JButton teamButton;
+    private JButton partecipantiButton;
 
     public JTextField getNomeInvitatoText() {return nomeInvitatoText;}
 

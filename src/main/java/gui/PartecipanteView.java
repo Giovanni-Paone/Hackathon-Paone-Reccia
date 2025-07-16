@@ -9,13 +9,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Partecipante {
+public class PartecipanteView {
     private static JFrame framePartecipante;
     private JLabel hackathonLabel;
     private JPanel partecipantePanel;
-    private JButton preccedentiButton;
-    private JButton attualeButton;
     private JButton precedentiButton;
+    private JButton attualeButton;
     private JScrollBar scrollBar1;
     private JLabel invitiLabel;
     private JButton creaTeamButton;
@@ -23,7 +22,7 @@ public class Partecipante {
     public JPanel getPartecipantePanel() {return partecipantePanel;}
 
 
-    public Partecipante(Controller controller) {
+    public PartecipanteView(Controller controller) {
         attualeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
