@@ -4,6 +4,9 @@ import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GiudiceView {
     private static JFrame frameGiudiceView;
@@ -14,13 +17,45 @@ public class GiudiceView {
     private JLabel dataInizioLabel;
     private JLabel dataFineLabel;
     private JProgressBar progressBar1;
-    private JLabel squadreLabel;
     private JLabel postiRimanentiLabel;
     private JLabel dimensioniMassimeTeamLabel;
-    private JScrollBar scrollBar1;
     private JLabel giudiciLabel;
+    private JButton precedentiButton;
+    private JButton teamButton;
+    private JButton partecipantiButton;
 
-    public GiudiceView(Controller controller) {}
+    public GiudiceView(Controller controller) {
+        precedentiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.precedentiHackathon();
+            }
+        });
+        teamButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.visualizzaTeam();
+                //non questo ma un altro uguale con permessi per i giudici
+            }
+        });
+        partecipantiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.visualizzaIscritti();
+                //non questo ma un altro uguale con permessi per i giudici
+            }
+        });
+        precedentiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.precedentiHackathon();
+            }
+        });
+    }
 
     public static void main(String[] args, Controller controller) {
         frameGiudiceView = new JFrame("Hackathon");

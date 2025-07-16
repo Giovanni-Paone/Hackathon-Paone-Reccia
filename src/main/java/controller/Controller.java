@@ -1,11 +1,12 @@
 package controller;
 
 import gui.*;
+import gui.Partecipante;
+import model.*;
 import model.Hackathon;
-import model.Piattaforma;
-import model.Utente;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Controller {
@@ -25,11 +26,58 @@ public class Controller {
                     "Errore di login",
                     JOptionPane.ERROR_MESSAGE);
         } else {
-            //controlla nella base di dati se esiste, se esiste:
-            Utente utente = new Utente(username, password);
             Piattaforma piattaforma = new Piattaforma();
-            Home.main(null, this);
-            login.getFrameLogin().dispose();
+            //controlla nella base di dati se esiste, se esiste:
+            int ruolo = 1; //se esiste, controlla il ruolo
+            switch (ruolo) {
+                case(-1):
+                    //se è presente un hackathon e non sei il giudice puoi solo vederlo senza fare nulla
+                    //se non è presente
+
+                    //raccogli i dati del hackathon dalla base di dati
+                    //per ora i dati saranno provvisori
+                    String titolo = "provvisorio";
+                    String sede = null;
+                    Date dataInizio =  new Date();
+                    Date dataFine = new Date();
+                    int maxIscritti = 15;
+                    int MAX_TEAM_SIZE = 4;
+                    Hackathon hackathon = new Hackathon(titolo, sede, dataInizio, dataFine, maxIscritti, MAX_TEAM_SIZE);
+                    Organizzatore organizzatore = new Organizzatore(username, hackathon);
+                    OrganizzatoreView.main(null, this);
+                    login.getFrameLogin().dispose();
+                    break;
+                case(0):
+                    //creare hackathon
+                    //Giudice giudice = new Giudice(username, hackathon);
+                    GiudiceView.main(null, this);
+                    login.getFrameLogin().dispose();
+                    break;
+                case(10):
+                    //cambia il ruolo da 10 a 1 nella base di dati
+                    JOptionPane.showMessageDialog(login.getPanel1(),
+                            "Non hai trovato un team in tempo",
+                            "tempo scaduto",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    ruolo = 1;
+                case(1):
+                    Utente utente = new Utente(username);
+                    Home.main(null, this);
+                    login.getFrameLogin().dispose();
+                    break;
+                case(2):
+                    //creare hackathon
+                    //Partecipante partecipante = new Partecipante(username, hackathon)
+                    Partecipante.main(null,  this);
+                    login.getFrameLogin().dispose();
+                    break;
+                case(3):
+                    //creare team
+                    //MembroTeam membroTeam = new MembroTeam(username);
+                    MembroTeamView.main(null,  this);
+                    login.getFrameLogin().dispose();
+                    break;
+            }
         }
     }
 
@@ -70,6 +118,32 @@ public class Controller {
         }
     }
 
+
+    public void guardaHackathon(Home home) {
+        if(2==2) { //controlla se c'è un hackathon corrente
+            IscrizioneHackathon.main(null, this);
+        }
+        else {
+            JOptionPane.showMessageDialog(home.getHomePanel(),
+                    "Non è presente nessun hackathon in corso",
+                    "Hackathon",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void precedentiHackathon() {
+        //prendere dalla base di dati il precedente
+        PrevHackathon.main(null, this);
+    }
+
+    public void visualizzaTeam() {
+        //mostra con base di dati
+    }
+
+    public void visualizzaIscritti() {
+        //mostra con base di dati
+    }
+
     public void creaHackathon(CreazioneHackathon creaHackathon) {
         //controlla se le date rispettano il formato
         int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
@@ -86,6 +160,25 @@ public class Controller {
             //aggiungi nella piattaforma
             OrganizzatoreView.main(null, this);
             creaHackathon.getFrameCreazioneHackathon().dispose();
+        }
+    }
+
+    public void modificaHackathon(ModificaHackathon modificaHackathon) {
+        //controlla se le date rispettano il formato
+        int risposta = JOptionPane.showConfirmDialog(modificaHackathon.getModificaHackathonPanel(),
+                "Sei sicuro dei dati inseriti?",
+                "Conferma",
+                JOptionPane.INFORMATION_MESSAGE);
+        if(risposta==JOptionPane.OK_OPTION) {
+            Hackathon hackathon = new Hackathon(modificaHackathon.getTitoloTextField().getText(),
+                    modificaHackathon.getSedeTextField().getText(),
+                    (Date) modificaHackathon.getDataInizioSpinner().getValue(),
+                    (Date) modificaHackathon.getDataFineSpinner().getValue(),
+                    (Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue(),
+                    (Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue());
+            //modifica nella base di dati
+            OrganizzatoreView.main(null, this);
+            modificaHackathon.getFrameModificaHackathon().dispose();
         }
     }
 

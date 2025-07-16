@@ -9,49 +9,41 @@ import java.awt.event.MouseEvent;
 
 public class Home {
     private static JFrame frameHome;
-    private JPanel mainPanel;
-    private JTextField searchBar;
-    private JButton cercaButton;
+    private JPanel homePanel;
+    private JButton attualeButton;
+    private JButton precedentiButton;
     private JScrollBar scrollBar1;
-    private JButton areaPersonaleButton;
-    private JButton creaHackathonButton;
-    private Controller controller;
+    private JLabel invitiLabel;
+    private JLabel hackathonLabel;
+
+    public JPanel getHomePanel() {return homePanel;}
+
 
     public Home(Controller controller) {
-
-        areaPersonaleButton.addMouseListener(new MouseAdapter() {
+        attualeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                controller.guardaHackathon(Home.this);
+            }
+        });
+        precedentiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                AreaPersonale.main(null, controller);
-            }
-        });
-        creaHackathonButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                CreazioneHackathon.main(null, controller);
-            }
-        });
-        cercaButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(2==2) { //controlla se esiste hackathon
-                    HackathonGUI.main(null, controller);
-                }
+                controller.precedentiHackathon();
             }
         });
     }
 
-
     public static void main(String[] args, Controller controller) {
         frameHome = new JFrame("Home");
-        frameHome.setContentPane(new Home(controller).mainPanel);
+        frameHome.setContentPane(new Home(controller).homePanel);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameHome.setPreferredSize(new Dimension(400, 350));
+        frameHome.setPreferredSize(new Dimension(400, 300));
         frameHome.setResizable(false);
         frameHome.pack();
         frameHome.setLocationRelativeTo(null);
         frameHome.setVisible(true);
     }
 }
+

@@ -1,10 +1,11 @@
 package model;
 
-public class Organizzatore extends Utente {
+public class Organizzatore{
+    public final String USERNAME;
     public final Hackathon HACKATHON;
 
-    Organizzatore(String NICKNAME, String password,  Hackathon HACKATHON) {
-        super(NICKNAME, password);
+    public Organizzatore(String NICKNAME, Hackathon HACKATHON) {
+        this.USERNAME = NICKNAME;
         this.HACKATHON = HACKATHON;
     }
 

@@ -20,6 +20,8 @@ public class OrganizzatoreView {
     private JProgressBar progressBar1;
     private JButton apriIscrizioniButton;
     private JButton invitaGiudiciButton;
+    private JButton effettuaCambiamentiButton;
+    private JButton precedentiButton;
 
     public JTextField getNomeInvitatoText() {return nomeInvitatoText;}
 
@@ -28,9 +30,19 @@ public class OrganizzatoreView {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.invitaGiudice(this);
+                controller.invitaGiudice(OrganizzatoreView.this);
             }
         });
+        effettuaCambiamentiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+            }
+            //controlla se la data è prima dell'inizio
+            //apri una nuova GUI uguale a creazione Hackathon con i dati già inseriti
+        });
+
         apriIscrizioniButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -39,6 +51,13 @@ public class OrganizzatoreView {
                         "Vuoi aprire le iscrizioni?",
                         "Conferma",
                         JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        precedentiButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.precedentiHackathon();
             }
         });
     }

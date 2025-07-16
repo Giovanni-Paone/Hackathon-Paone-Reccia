@@ -56,7 +56,7 @@ public class Iscrizione {
     public static void main(String[] args, Controller controller) {
         frameIscrizione = new JFrame("Iscrizione");
         frameIscrizione.setContentPane(new Iscrizione(controller).panel1);
-        frameIscrizione.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameIscrizione.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameIscrizione.setPreferredSize(new Dimension(280, 250));
         frameIscrizione.setResizable(true);
         frameIscrizione.pack();

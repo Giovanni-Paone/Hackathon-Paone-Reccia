@@ -3,7 +3,8 @@ package model;
 import java.util.ArrayList;
 
 public class Piattaforma {
-    public final ArrayList<Hackathon> hackathons = new ArrayList<Hackathon>();
+    public Hackathon hackathon;
+    public final ArrayList<Hackathon> hackathonsPrecedenti = new ArrayList<Hackathon>();
 
     public Piattaforma(){}
 
