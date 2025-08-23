@@ -1,11 +1,13 @@
 package controller;
 
+import database.dao.UtenteDAO;
 import gui.*;
 import gui.PartecipanteView;
 import model.*;
 import model.Hackathon;
 
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -108,6 +110,15 @@ public class Controller {
                     "Conferma",
                     JOptionPane.INFORMATION_MESSAGE);
             if(risposta==JOptionPane.OK_OPTION) {
+                try {
+                Utente utente = new Utente(username);
+                UtenteDAO utenteDAO = new UtenteDAO();
+                utenteDAO.save(utente, password);
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
                 JOptionPane.showMessageDialog(iscrizione.getPanel1(),
                         "Account creato con successo.",
                         "Successo",

@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Utente {
     public final String USERNAME;
-    //la pasword sarà solo nella base di dati come controllo
+    //la password sarà solo nella base di dati come controllo
     private ArrayList<InvitoTeam> invitiTeam = new ArrayList();
     private InvitoGiudice invitoGiudice;
     /**

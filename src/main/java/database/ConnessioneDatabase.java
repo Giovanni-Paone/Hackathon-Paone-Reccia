@@ -1,4 +1,4 @@
-package Database;
+package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,13 +27,10 @@ public class ConnessioneDatabase {
 
 	}
 
-
 	public static ConnessioneDatabase getInstance() throws SQLException {
-		if (instance == null) {
+		if (instance == null || instance.connection.isClosed()) {
 			instance = new ConnessioneDatabase();
-		} else if (instance.connection.isClosed()) {
-			instance = new ConnessioneDatabase();
-		}
+            }
 		return instance;
 	}
 }
