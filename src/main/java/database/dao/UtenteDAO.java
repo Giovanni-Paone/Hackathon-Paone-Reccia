@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UtenteDAO implements DAO_Generico<Utente, String> {
+public class UtenteDAO {
 
     private Connection connection;
 
@@ -15,7 +15,6 @@ public class UtenteDAO implements DAO_Generico<Utente, String> {
         this.connection = ConnessioneDatabase.getInstance().connection;
     }
 
-    @Override
     public boolean save(Utente utente, String password) throws SQLException {
         String sql = "INSERT INTO UTENTE (Username, Password) VALUES (?, ?)"; //vedere che fare con ruolo
 
@@ -31,7 +30,6 @@ public class UtenteDAO implements DAO_Generico<Utente, String> {
         }
     }
 
-    @Override
     public boolean delete(String username) throws SQLException {
         String sql = "DELETE FROM UTENTE WHERE Username = ?";
 
@@ -45,7 +43,6 @@ public class UtenteDAO implements DAO_Generico<Utente, String> {
         }
     }
 
-    @Override
     public Utente findByKey(String username) throws SQLException {
         String sql = "SELECT Username FROM UTENTE WHERE Username = ?";
 
@@ -63,7 +60,6 @@ public class UtenteDAO implements DAO_Generico<Utente, String> {
         return null;
     }
 
-    @Override
     public List<Utente> findAll() throws SQLException {
         List<Utente> utenti = new ArrayList<>();
         String sql = "SELECT Username FROM UTENTE ORDER BY Username";

@@ -6,6 +6,7 @@ import java.util.Date;
 public class Hackathon {
     private String titolo;
     private String sede;
+    private Organizzatore organizzatore;
     private Date dataInizio;
     private Date dataFine;
     private int maxIscritti;
@@ -14,9 +15,10 @@ public class Hackathon {
     private int nTeamIscritti;
     private boolean aperturaRegistrazioni = false;
 
-    public Hackathon(String titolo, String sede, Date dataInizio, Date fine, int maxIscritti, int MAX_TEAM_SIZE) {
+    public Hackathon(String titolo, String sede, Organizzatore organizzatore, Date dataInizio, Date fine, int maxIscritti, int MAX_TEAM_SIZE) {
         this.titolo = titolo;
         this.sede = sede;
+        this.organizzatore = organizzatore;
         this.dataInizio = dataInizio;
         this.dataFine = fine;
         this.maxIscritti = maxIscritti;
@@ -29,6 +31,8 @@ public class Hackathon {
 
     public String getSede() {return sede;}
     public void cambiaSede(String sede) {this.sede = sede;}
+
+    public Organizzatore getOrganizzatore() {return organizzatore;}
 
     public Date getDataInizio() {return dataInizio;}
     public void cambiaInizio(Date dataInizio) {this.dataInizio = dataInizio;}

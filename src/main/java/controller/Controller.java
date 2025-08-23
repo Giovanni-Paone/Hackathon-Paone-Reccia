@@ -1,5 +1,6 @@
 package controller;
 
+import database.dao.DAO_Hackathon;
 import database.dao.UtenteDAO;
 import gui.*;
 import gui.PartecipanteView;
@@ -33,6 +34,7 @@ public class Controller {
             int ruolo = 1; //se esiste, controlla il ruolo
             switch (ruolo) {
                 case(-1):
+                    Organizzatore organizzatore = new Organizzatore(username);
                     //se è presente un hackathon e non sei il giudice puoi solo vederlo senza fare nulla
                     //se non è presente
 
@@ -44,8 +46,8 @@ public class Controller {
                     Date dataFine = new Date();
                     int maxIscritti = 15;
                     int MAX_TEAM_SIZE = 4;
-                    Hackathon hackathon = new Hackathon(titolo, sede, dataInizio, dataFine, maxIscritti, MAX_TEAM_SIZE);
-                    Organizzatore organizzatore = new Organizzatore(username, hackathon);
+                    Hackathon hackathon = new Hackathon(titolo, sede, organizzatore, dataInizio, dataFine, maxIscritti, MAX_TEAM_SIZE);
+                    organizzatore.setHackathon(hackathon);
                     OrganizzatoreView.main(null, this);
                     login.getFrameLogin().dispose();
                     break;
@@ -177,26 +179,35 @@ public class Controller {
         //mostra con base di dati
     }
 
-    public void creaHackathon(CreazioneHackathon creaHackathon) {
+    public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
         //controlla se le date rispettano il formato
         int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
                 "Sei sicuro dei dati inseriti?",
                 "Conferma",
                 JOptionPane.INFORMATION_MESSAGE);
         if(risposta==JOptionPane.OK_OPTION) {
+            try {
             Hackathon hackathon = new Hackathon(creaHackathon.getTitoloTextField().getText(),
                     creaHackathon.getSedeTextField().getText(),
+                    organizzatore,
                     (Date) creaHackathon.getDataInizioSpinner().getValue(),
                     (Date) creaHackathon.getDataFineSpinner().getValue(),
                     (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue(),
                     (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue());
             //aggiungi nella piattaforma
+                organizzatore.setHackathon(hackathon);
+                DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+
             OrganizzatoreView.main(null, this);
             creaHackathon.getFrameCreazioneHackathon().dispose();
         }
     }
 
-    public void modificaHackathon(ModificaHackathon modificaHackathon) {
+    public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore) {
         //controlla se le date rispettano il formato
         int risposta = JOptionPane.showConfirmDialog(modificaHackathon.getModificaHackathonPanel(),
                 "Sei sicuro dei dati inseriti?",
@@ -205,6 +216,7 @@ public class Controller {
         if(risposta==JOptionPane.OK_OPTION) {
             Hackathon hackathon = new Hackathon(modificaHackathon.getTitoloTextField().getText(),
                     modificaHackathon.getSedeTextField().getText(),
+                    organizzatore,
                     (Date) modificaHackathon.getDataInizioSpinner().getValue(),
                     (Date) modificaHackathon.getDataFineSpinner().getValue(),
                     (Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue(),

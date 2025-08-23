@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.Organizzatore;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +34,7 @@ public class CreazioneHackathon {
     public JSpinner getLimiteIscrittiSpinner() { return limiteIscrittiSpinner; }
     public JSpinner getLimiteComponentiSquadreSpinner() { return limiteComponentiSquadreSpinner; }
 
-    public CreazioneHackathon(Controller controller) {
+    public CreazioneHackathon(Controller controller, Organizzatore organizzatore) {
             dataInizioSpinner.setModel(new SpinnerDateModel());
             dataInizioSpinner.setEditor(new JSpinner.DateEditor(dataInizioSpinner, "dd/MM/yyyy"));
 
@@ -57,14 +58,14 @@ public class CreazioneHackathon {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.creaHackathon(CreazioneHackathon.this);
+                controller.creaHackathon(CreazioneHackathon.this, organizzatore );
             }
         });
     }
 
-    public static void main(String[] args, Controller controller) {
+    public static void main(String[] args, Controller controller, Organizzatore organizzatore) {
         frameCreazioneHackathon = new JFrame("Creazione Hackathon");
-        frameCreazioneHackathon.setContentPane(new CreazioneHackathon(controller).creazioneHackathonPanel);
+        frameCreazioneHackathon.setContentPane(new CreazioneHackathon(controller, organizzatore).creazioneHackathonPanel);
         frameCreazioneHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameCreazioneHackathon.setPreferredSize(new Dimension(400, 450));
         frameCreazioneHackathon.setResizable(false);

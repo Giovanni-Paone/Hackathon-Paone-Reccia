@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DAO_Generico<Type, Key> {
 
-    boolean save(Utente utente, String password) throws SQLException;
+    boolean save(Type type) throws SQLException;
 
     boolean delete(Key key) throws SQLException;
 
