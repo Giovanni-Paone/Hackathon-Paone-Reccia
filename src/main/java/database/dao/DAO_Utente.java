@@ -7,11 +7,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UtenteDAO {
+public class DAO_Utente {
 
     private Connection connection;
 
-    public UtenteDAO() throws SQLException {
+    public DAO_Utente() throws SQLException {
         this.connection = ConnessioneDatabase.getInstance().connection;
     }
 
@@ -125,7 +125,38 @@ public class UtenteDAO {
             throw new SQLException("Errore durante la ricerca degli utenti per hackathon: " + e.getMessage(), e);
         }
 
+
+
         return utenti;
+    }
+
+    public Utente findOrganizzatoreByUsername(String username) throws SQLException {
+        String sql = "SELECT Username FROM UTENTE WHERE Username = ? AND Ruolo = -1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Utente(rs.getString("Username"));
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Utente> findAllOrganizzatori() throws SQLException {
+        List<Utente> result = new ArrayList<>();
+        String sql = "SELECT Username FROM UTENTE WHERE Ruolo = -1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                result.add(new Utente(rs.getString("Username")));
+            }
+        }
+        return result;
     }
 
 }

@@ -1,7 +1,7 @@
 package controller;
 
 import database.dao.DAO_Hackathon;
-import database.dao.UtenteDAO;
+import database.dao.DAO_Utente;
 import gui.*;
 import gui.PartecipanteView;
 import model.*;
@@ -114,7 +114,7 @@ public class Controller {
             if(risposta==JOptionPane.OK_OPTION) {
                 try {
                 Utente utente = new Utente(username);
-                UtenteDAO utenteDAO = new UtenteDAO();
+                DAO_Utente utenteDAO = new DAO_Utente();
                 utenteDAO.save(utente, password);
 
                 } catch (SQLException e) {
