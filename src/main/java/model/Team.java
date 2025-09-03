@@ -5,19 +5,21 @@ import java.util.ArrayList;
 
 public class Team {
     public final String NOME_TEAM;
-    public final ArrayList<MembroTeam> partecipanti = new ArrayList<MembroTeam>();
+    public final ArrayList<String> partecipanti = new ArrayList<>();
     private ArrayList<File> progressi = new ArrayList<File>();
-    private int voto;
 
-    Team(String nomeTeam, Partecipante creatoreP) {
+
+    public Team(String nomeTeam) {
         this.NOME_TEAM = nomeTeam;
-        MembroTeam creatore = new MembroTeam(this, creatoreP.USERNAME );
-        this.partecipanti.add(creatore);
     }
 
-    public void addPartecipante(Partecipante partecipante){
-        MembroTeam creatore = new MembroTeam(this, partecipante.USERNAME);
-        this.partecipanti.add(creatore);
+    public Team(String nomeTeam, String creatoreP) {
+        this.NOME_TEAM = nomeTeam;
+        this.partecipanti.add(creatoreP);
+    }
+
+    public void addPartecipante(String partecipante){
+        this.partecipanti.add(partecipante);
     }
 
     public void aggiornaProgressi(File fp) {}

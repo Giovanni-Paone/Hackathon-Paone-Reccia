@@ -44,7 +44,7 @@ public class CreazioneHackathon {
         titoloTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(2==2){ //nome inesistente
+                if(2==2){ //nome inesistente //non ricordo cosa sia questo
                     sedeTextField.requestFocus();
                 }
             }
@@ -63,7 +63,7 @@ public class CreazioneHackathon {
         });
     }
 
-    public static void main(String[] args, Controller controller, Organizzatore organizzatore) {
+    public static void main(Controller controller, Organizzatore organizzatore) {
         frameCreazioneHackathon = new JFrame("Creazione Hackathon");
         frameCreazioneHackathon.setContentPane(new CreazioneHackathon(controller, organizzatore).creazioneHackathonPanel);
         frameCreazioneHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

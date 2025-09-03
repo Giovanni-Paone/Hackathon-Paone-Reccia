@@ -54,7 +54,7 @@ public class Iscrizione {
 
 
     public static void main(String[] args, Controller controller) {
-        frameIscrizione = new JFrame("Iscrizione");
+        frameIscrizione = new JFrame("utenti");
         frameIscrizione.setContentPane(new Iscrizione(controller).panel1);
         frameIscrizione.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameIscrizione.setPreferredSize(new Dimension(280, 250));

@@ -10,8 +10,8 @@ public class ConnessioneDatabase {
 	private static ConnessioneDatabase instance;
 	public Connection connection = null;
 	private String nome = "postgres";
-	private String password = "password";
-	private String url = "jdbc:postgresql://localhost:5433/Borsa";
+	private String password = "1234";
+	private String url = "jdbc:postgresql://localhost:5432/Competizione";
 	private String driver = "org.postgresql.Driver";
 
 	// COSTRUTTORE

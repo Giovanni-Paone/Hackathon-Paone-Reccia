@@ -1,7 +1,9 @@
 package gui;
 
 import controller.Controller;
+import model.Hackathon;
 import model.Organizzatore;
+import model.UtenteBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,12 +37,14 @@ public class ModificaHackathon {
     public JSpinner getLimiteComponentiSquadreSpinner() { return limiteComponentiSquadreSpinner; }
 
 
-    public ModificaHackathon(Controller controller, Organizzatore organizzatore) {
+    public ModificaHackathon(Controller controller, Organizzatore organizzatore, model.Hackathon hackathon) {
         dataInizioSpinner.setModel(new SpinnerDateModel());
         dataInizioSpinner.setEditor(new JSpinner.DateEditor(dataInizioSpinner, "dd/MM/yyyy"));
 
         dataFineSpinner.setModel(new SpinnerDateModel());
         dataFineSpinner.setEditor(new JSpinner.DateEditor(dataFineSpinner, "dd/MM/yyyy"));
+
+        setHackathon(hackathon);
 
         titoloTextField.addActionListener(new ActionListener() {
             @Override
@@ -59,14 +63,23 @@ public class ModificaHackathon {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.modificaHackathon(gui.ModificaHackathon.this, organizzatore);
+                controller.modificaHackathon(gui.ModificaHackathon.this, organizzatore, hackathon);
             }
         });
     }
 
-    public static void main(String[] args, Controller controller, Organizzatore organizzatore) {
+    private void setHackathon(model.Hackathon hackathon) {
+        titoloTextField.setText(hackathon.getTitolo());
+        sedeTextField.setText(hackathon.getSede());
+        dataInizioSpinner.setValue(hackathon.getDataInizio());
+        dataFineSpinner.setValue(hackathon.getDataFine());
+        limiteComponentiSquadreSpinner.setValue(hackathon.getMaxTeamSize());
+        limiteIscrittiSpinner.setValue(hackathon.getMaxIscritti());
+    }
+
+    public static void main(Controller controller, Organizzatore organizzatore, Hackathon hackathon) {
         frameModificaHackathon = new JFrame("Creazione Hackathon");
-        frameModificaHackathon.setContentPane(new gui.CreazioneHackathon(controller, organizzatore).getCreazioneHackathonPanel());
+        frameModificaHackathon.setContentPane(new gui.ModificaHackathon(controller, organizzatore, hackathon).getModificaHackathonPanel());
         frameModificaHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameModificaHackathon.setPreferredSize(new Dimension(400, 450));
         frameModificaHackathon.setResizable(false);

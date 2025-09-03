@@ -1,6 +1,9 @@
 package gui;
 
 import controller.Controller;
+import model.Organizzatore;
+import model.Utente;
+import model.UtenteBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,33 +27,95 @@ public class Hackathon {
     private JScrollBar scrollBar1;
     private JButton partecipantiButton;
     private JButton precedentiButton;
+    private JLabel titolo;
+    private JLabel sede;
+    private JLabel organizzatore;
+    private JLabel dataInizio;
+    private JLabel dataFine;
+    private JLabel nTeam;
+    private JLabel nMaxTeamSize;
+    private JLabel postiRimanenti;
+    private JButton apriIscrizioniButton;
+    private JButton effettuaCambiamentiButton;
+    private JButton partecipaButton;
 
-    public Hackathon(Controller controller) {
+    public JFrame getFrameHackathon() {return frameHackathon;}
+    public JPanel getHackathonPanel() {return hackathonPanel;}
+
+    public Hackathon(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
+        setHackathon(hackathon, utente);
+
         teamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.visualizzaTeam();
+                controller.visualizzaTeam(hackathon, utente);
             }
         });
+
         partecipantiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.visualizzaIscritti();
+                controller.visualizzaIscritti(hackathon, utente);
             }
         });
-        precedentiButton.addMouseListener(new MouseAdapter() {
+
+        effettuaCambiamentiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.precedentiHackathon();
+
+                controller.modificaHackathon(Hackathon.this, (Organizzatore) utente, hackathon);
+            }
+        });
+
+        apriIscrizioniButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                JOptionPane.showConfirmDialog(hackathonPanel,
+                        "Vuoi aprire le iscrizioni?",
+                        "Conferma",
+                        JOptionPane.INFORMATION_MESSAGE);
+                //farlo sul controller
+            }
+        });
+        partecipaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.partecipa(Hackathon.this, (Utente) utente, hackathon);
             }
         });
     }
 
-    public static void main(String[] args, Controller controller) {
+    private void setHackathon(model.Hackathon hackathon, UtenteBase utente) {
+        titolo.setText(hackathon.getTitolo());
+        sede.setText(hackathon.getSede());
+        organizzatore.setText(hackathon.getOrganizzatore());
+        dataInizio.setText(String.valueOf(hackathon.getDataInizio()));
+        dataFine.setText(String.valueOf(hackathon.getDataFine()));
+        nTeam.setText(String.valueOf(hackathon.getNTeamIscritti()));
+        nMaxTeamSize.setText(String.valueOf(hackathon.getMaxTeamSize()));
+        postiRimanenti.setText(String.valueOf(hackathon.getMaxIscritti() - hackathon.getNPartecipantiIscritti()));
+        progressBar1.setMinimum(0);
+        progressBar1.setMaximum(hackathon.getMaxIscritti());
+        progressBar1.setValue(hackathon.getNPartecipantiIscritti());
+
+        if(!(utente.USERNAME.equals(hackathon.getOrganizzatore())) ||
+                hackathon.getAperturaRegistrazioni()){
+            apriIscrizioniButton.setVisible(false);
+            effettuaCambiamentiButton.setVisible(false);
+        }
+
+        if (!hackathon.getAperturaRegistrazioni() || utente.getRuolo() != 1) {
+            partecipaButton.setVisible(false);
+        }
+    }
+
+    public static void main(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
         frameHackathon = new JFrame("Hackathon");
-        frameHackathon.setContentPane(new Hackathon(controller).hackathonPanel);
+        frameHackathon.setContentPane(new Hackathon(controller, hackathon, utente).hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameHackathon.setPreferredSize(new Dimension(450, 400));
         frameHackathon.setResizable(false);
