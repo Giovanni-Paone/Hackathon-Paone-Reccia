@@ -47,7 +47,7 @@ public class Home {
         precedentiButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                controller.precedentiHackathon();
+                VisualizzaHackathon.main(controller, utente, null);
             }
         });
 
@@ -81,13 +81,13 @@ public class Home {
             rifiuta.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    //rifiuta controller
+                    controller.rifiutaInvito(Home.this, utente, invito);
                 }
             });
             accetta.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                   controller.accettaInvito(utente, invito);
+                   controller.accettaInvito(Home.this, utente, invito);
                 }
             });
 

@@ -2,6 +2,7 @@ package database.dao;
 
 import database.ConnessioneDatabase;
 import model.Hackathon;
+import model.Organizzatore;
 import model.Utente;
 
 import java.sql.*;
@@ -18,8 +19,8 @@ public class DAO_Hackathon {
     public boolean save(Hackathon hackathon) throws SQLException {
         String sql = """
                 INSERT INTO hackathon (titolo, sede, datainizio, datafine, maxiscritti, maxteamsize,
-                                       organizzatore, dataaperturaregistrazioni) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                       organizzatore)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -29,8 +30,7 @@ public class DAO_Hackathon {
             stmt.setDate(4, new java.sql.Date(hackathon.getDataFine().getTime()));
             stmt.setInt(5, hackathon.getMaxIscritti());
             stmt.setInt(6, hackathon.getMaxTeamSize());
-            stmt.setString(9, hackathon.getOrganizzatore());
-            stmt.setDate(10, null); // vedere come fare
+            stmt.setString(7, hackathon.getOrganizzatore());
 
             return stmt.executeUpdate() > 0;
         }
@@ -38,12 +38,11 @@ public class DAO_Hackathon {
 
     public boolean update(String oldtitolo, String organizzatore, Hackathon hackathon) throws SQLException {
         String sql = """
-        
-                UPDATE hackathon
-        SET titolo = ?, sede = ?, datainizio = ?, datafine = ?,
+            UPDATE hackathon
+            SET titolo = ?, sede = ?, datainizio = ?, datafine = ?,
             maxiscritti = ?, maxteamsize = ?
-        WHERE titolo = ?
-        """;
+            WHERE titolo = ?
+            """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, hackathon.getTitolo());
@@ -84,26 +83,13 @@ public class DAO_Hackathon {
         return null;
     }
 
-
-    public ArrayList<Hackathon> findAll() throws SQLException {
-        String sql = "SELECT * FROM hackathon ORDER BY datafine DESC";
-        ArrayList<Hackathon> hackathons = new ArrayList<>();
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                hackathons.add(mapRowToHackathon(rs));
-            }
-        }
-        return hackathons;
-    }
-
-    public ArrayList<Hackathon> getByOrganizzatore(String organizzatore) throws SQLException {
-        String sql = "SELECT * FROM hackathon WHERE organizzatore LIKE ? ORDER BY datafine DESC";
+    public ArrayList<Hackathon> getHackathons(String hackathon, String organizzatore) throws SQLException {
+        String sql = "SELECT * FROM hackathon WHERE titolo LIKE ? AND organizzatore LIKE ? ORDER BY datafine DESC";
         ArrayList<Hackathon> hackathons = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, organizzatore + "%"); // CORRETTO
+            stmt.setString(1, hackathon + "%");
+            stmt.setString(2, organizzatore + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -114,46 +100,13 @@ public class DAO_Hackathon {
         return hackathons;
     }
 
-
-        /* vedere che fare
-    public boolean openRegistrations(String titolo) throws SQLException {
+    public boolean aperturaRegistrazioni(String titolo) throws SQLException {
         String sql = "UPDATE hackathon SET aperturaregistrazioni = true, dataaperturaregistrazioni = CURRENT_DATE WHERE titolo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, titolo);
             return stmt.executeUpdate() > 0;
         }
     }
-     */
-
-    public ArrayList<Hackathon> getFinishedHackathons() throws SQLException {
-        String sql = "SELECT * FROM hackathon WHERE datafine < CURRENT_DATE";
-        ArrayList<Hackathon> hackathons = new ArrayList<>();
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                hackathons.add(mapRowToHackathon(rs));
-            }
-        }
-        return hackathons;
-    }
-
-    /*
-    public boolean isHackathonFinished(String titolo) throws SQLException {
-        String sql = "SELECT datafine FROM hackathon WHERE titolo = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, titolo);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Date dataFine = rs.getDate("datafine");
-                    return dataFine != null && dataFine.before(new java.util.Date());
-                }
-            }
-        }
-        return false;
-    }
-
-     */
-
 
     private Hackathon mapRowToHackathon(ResultSet rs) throws SQLException {
         Hackathon hackathon = new Hackathon(
@@ -164,7 +117,7 @@ public class DAO_Hackathon {
                 rs.getDate("datafine"),
                 rs.getInt("maxiscritti"),
                 rs.getInt("maxteamsize"),
-                (rs.getInt("nteamis c ritti"))-1,
+                (rs.getInt("nteamiscritti"))-1,
                 rs.getInt("utentiIscritti"),
                 rs.getBoolean("aperturaregistrazioni")
         );
@@ -189,5 +142,42 @@ public class DAO_Hackathon {
 
         return new Utente(utente.USERNAME, 2);
     }
-//per farlo andare su github che non era andato
+
+    public ArrayList<Organizzatore> findAllGiudici(Hackathon hackathon) throws SQLException {
+        ArrayList<Organizzatore> result = new ArrayList<>();
+        String sql = "SELECT username FROM giudice WHERE hackathon = ? ORDER BY username ASC";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, hackathon.getTitolo());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new Organizzatore(rs.getString("username"), 0));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void squalifica(String username, Hackathon hackathon) throws SQLException {
+        String sql = "DELETE FROM partecipanti WHERE hackathon = ? AND username = ?";
+
+        try (PreparedStatement deleteStmt = connection.prepareStatement(sql)) {
+            deleteStmt.setString(1, hackathon.getTitolo());
+            deleteStmt.setString(2, username);
+            deleteStmt.executeUpdate();
+        }
+
+        sql = "UPDATE utente SET ruolo = 29 WHERE username = ?";
+
+        try (PreparedStatement updateStmt = connection.prepareStatement(sql)) {
+            updateStmt.setString(1, username);
+            updateStmt.executeUpdate();
+        }
+
+    }
+
+
+
 }

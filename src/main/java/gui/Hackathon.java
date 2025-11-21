@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Hackathon {
     private static JFrame frameHackathon;
@@ -38,12 +39,14 @@ public class Hackathon {
     private JButton apriIscrizioniButton;
     private JButton effettuaCambiamentiButton;
     private JButton partecipaButton;
+    private JPanel giudiciPanel;
 
     public JFrame getFrameHackathon() {return frameHackathon;}
     public JPanel getHackathonPanel() {return hackathonPanel;}
 
-    public Hackathon(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
+    public Hackathon(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, UtenteBase utente) {
         setHackathon(hackathon, utente);
+        aggiornaGiudiciPanel(giudici);
 
         teamButton.addActionListener(new ActionListener() {
             @Override
@@ -65,7 +68,7 @@ public class Hackathon {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                controller.modificaHackathon(Hackathon.this, (Organizzatore) utente, hackathon);
+                controller.modificaHackathon(Hackathon.this, (Organizzatore) utente, hackathon, giudici);
             }
         });
 
@@ -77,7 +80,7 @@ public class Hackathon {
                         "Vuoi aprire le iscrizioni?",
                         "Conferma",
                         JOptionPane.INFORMATION_MESSAGE);
-                //farlo sul controller
+                controller.apriRegistrazioni(Hackathon.this, hackathon, giudici, (Organizzatore) utente);
             }
         });
         partecipaButton.addMouseListener(new MouseAdapter() {
@@ -102,7 +105,7 @@ public class Hackathon {
         progressBar1.setMaximum(hackathon.getMaxIscritti());
         progressBar1.setValue(hackathon.getNPartecipantiIscritti());
 
-        if(!(utente.USERNAME.equals(hackathon.getOrganizzatore())) ||
+        if(!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
                 hackathon.getAperturaRegistrazioni()){
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
@@ -113,9 +116,35 @@ public class Hackathon {
         }
     }
 
-    public static void main(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
+    private void aggiornaGiudiciPanel(ArrayList<Organizzatore> giudici) {
+        giudiciPanel.removeAll();
+        giudiciPanel.setLayout(new BoxLayout(giudiciPanel, BoxLayout.Y_AXIS));
+
+        if(giudici != null) {
+            for (int i = 0; i < giudici.size(); i += 2) {
+                JPanel riga = new JPanel(new BorderLayout());
+
+                JLabel leftLabel = new JLabel(giudici.get(i).USERNAME);
+                riga.add(leftLabel, BorderLayout.WEST);
+
+                if (i + 1 < giudici.size()) {
+                    JLabel rightLabel = new JLabel(giudici.get(i + 1).USERNAME);
+                    riga.add(rightLabel, BorderLayout.EAST);
+                }
+
+                giudiciPanel.add(riga);
+            }
+
+            giudiciPanel.revalidate();
+            giudiciPanel.repaint();
+        }
+    }
+
+
+
+    public static void main(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, UtenteBase utente) {
         frameHackathon = new JFrame("Hackathon");
-        frameHackathon.setContentPane(new Hackathon(controller, hackathon, utente).hackathonPanel);
+        frameHackathon.setContentPane(new Hackathon(controller, hackathon, giudici, utente).hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameHackathon.setPreferredSize(new Dimension(450, 400));
         frameHackathon.setResizable(false);

@@ -1,11 +1,11 @@
 package database.dao;
 
 import database.ConnessioneDatabase;
-import model.Utente;
+import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DAO_Utente {
 
@@ -16,7 +16,7 @@ public class DAO_Utente {
     }
 
     public boolean save(Utente utente, String password) throws SQLException {
-        String sql = "INSERT INTO UTENTE (Username, Password) VALUES (?, ?)"; //vedere che fare con ruolo
+        String sql = "INSERT INTO UTENTE (Username, Password, Ruolo) VALUES (?, ?, 1)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, utente.USERNAME);
@@ -31,61 +31,66 @@ public class DAO_Utente {
     }
 
     public boolean delete(String username) throws SQLException {
-        String sql = "DELETE FROM UTENTE WHERE Username = ?";
-
+        String sql = "UPDATE utente SET ruolo = 30 WHERE username = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, username);
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante l'eliminazione dell'utente: " + e.getMessage(), e);
+            stmt.executeUpdate();
         }
-    }
 
-    public Utente findByKey(String username) throws SQLException {
-        String sql = "SELECT Username FROM UTENTE WHERE Username = ?";
+        DAO_Hackathon daoHackathon = new DAO_Hackathon();
+        Hackathon hackathon = daoHackathon.findHackathonCorrente();
+        if (hackathon == null) {return true;}
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, username);
+        Date oggi = Date.valueOf(LocalDate.now());
+        if (hackathon.getDataInizio().before(oggi)) {
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Utente(rs.getString("Username"));
+            String nomeTeam = null;
+            sql = "SELECT nometeam FROM partecipante_hackathon WHERE username = ? AND hackathon = ?";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, username);
+                ps.setString(2, hackathon.getTitolo());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        nomeTeam = rs.getString("nometeam");
+                    }
                 }
             }
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante la ricerca dell'utente: " + e.getMessage(), e);
-        }
-        return null;
-    }
 
-    public List<Utente> findAll() throws SQLException {
-        List<Utente> utenti = new ArrayList<>();
-        String sql = "SELECT Username FROM UTENTE ORDER BY Username";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()
-        ) {
-
-            while (rs.next()) {
-                Utente utente = new Utente(rs.getString("Username"));
-                utenti.add(utente);
+            sql = "DELETE FROM partecipante_hackathon WHERE username = ? AND hackathon = ?";
+            try (PreparedStatement del = connection.prepareStatement(sql)) {
+                del.setString(1, username);
+                del.setString(2, hackathon.getTitolo());
+                del.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante il recupero di tutti gli utenti: " + e.getMessage(), e);
+
+            if (nomeTeam != null) {
+                int rimasti = 0;
+                sql = "SELECT COUNT(*) FROM partecipante_hackathon WHERE hackathon = ? AND nometeam = ?";
+                try (PreparedStatement cnt = connection.prepareStatement(sql)) {
+                    cnt.setString(1, hackathon.getTitolo());
+                    cnt.setString(2, nomeTeam);
+                    try (ResultSet rs = cnt.executeQuery()) {
+                        if (rs.next()) rimasti = rs.getInt(1);
+                    }
+                }
+
+                if (rimasti == 0) {
+                    sql = "DELETE FROM team WHERE hackathon = ? AND nome = ?";
+                    try (PreparedStatement delTeam = connection.prepareStatement(sql)) {
+                        delTeam.setString(1, hackathon.getTitolo());
+                        delTeam.setString(2, nomeTeam);
+                        delTeam.executeUpdate();
+                    }
+                }
+            }
         }
 
-        return utenti;
+        return true;
     }
 
-    public Utente findByUsername(String username) throws SQLException {
-        // Questo metodo è identico a findByKey, ma lo mantengo per chiarezza dell'interfaccia
-        return findByKey(username);
-    }
 
-    public Utente login(String username, String password) throws SQLException {
-        String sql = "SELECT Username, Password FROM UTENTE WHERE Username = ? AND Password = ?";
+    public UtenteBase login(String username, String password) throws SQLException {
+        String sql = "SELECT Username, Ruolo FROM UTENTE WHERE Username = ? AND Password = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, username);
@@ -93,71 +98,192 @@ public class DAO_Utente {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Utente(rs.getString("Username"));
+                    int ruolo = rs.getInt("Ruolo");
+                    String user = rs.getString("Username");
+
+                    UtenteBase utente;
+
+                    switch (ruolo) {
+                        case -1: //Organizzatore
+                            utente = new Organizzatore(user, -1);
+                            break;
+
+                        case 0: //Giudice
+                            utente = new Organizzatore(username, 0);
+                            break;
+
+                        case 1:
+                            utente = new Utente(user, 1);
+                            break;
+
+                        case 2: // Partecipante
+                            utente = new Utente(user, 2);
+                            break;
+
+                        case 3:// Membro di un Team
+                            sql = """
+                            
+                                    SELECT ph.nometeam, ph.hackathon
+                            FROM partecipante_hackathon ph
+                            JOIN hackathon h ON ph.hackathon = h.titolo
+                            WHERE ph.username = ? AND h.datafine > CURRENT_DATE
+                            """;
+
+                            try (PreparedStatement stmtTeam = connection.prepareStatement(sql)) {
+                                stmtTeam.setString(1, user);
+
+                                try (ResultSet rsTeam = stmtTeam.executeQuery()) {
+                                    rsTeam.next();
+                                    String nomeTeam = rsTeam.getString("nometeam");
+                                    String titoloHackathon = rsTeam.getString("hackathon");
+
+                                    Team team = new Team(nomeTeam);
+
+                                    sql = "SELECT username FROM partecipante_hackathon WHERE nometeam = ? AND hackathon = ?";
+                                    try (PreparedStatement stmtPartecipanti = connection.prepareStatement(sql)) {
+                                        stmtPartecipanti.setString(1, nomeTeam);
+                                        stmtPartecipanti.setString(2, titoloHackathon);
+
+                                        try (ResultSet rsPart = stmtPartecipanti.executeQuery()) {
+                                            while (rsPart.next()) {
+                                                team.partecipanti.add(rsPart.getString("username"));
+                                            }
+                                        }
+                                    }
+
+                                    utente = new MembroTeam(user, team);
+                                }
+                            }
+
+                            break;
+                        case 30:
+                            utente = new UtenteBase(user, 30);
+                            break;
+
+                        default:
+                            utente = null; //in caso di errori
+                            break;
+                    }
+
+                    return utente;
                 }
             }
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante il login dell'utente: " + e.getMessage(), e);
         }
+
         return null;
     }
 
-    public List<Utente> findByHackathon(int hackathonId) throws SQLException {
-        List<Utente> utenti = new ArrayList<>();
-        String sql = """
-            SELECT DISTINCT u.Username, u.Password 
-            FROM UTENTE u 
-            JOIN MEMBERSHIP m ON u.Username = m.Username_utente 
-            WHERE m.Titolo_hackathon = ?
-            ORDER BY u.Username
-        """;
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, String.valueOf(hackathonId));
+public ArrayList<Utente> findByKey(String username) throws SQLException {
+    String sql = """
+            SELECT Username, Ruolo 
+            FROM UTENTE 
+            WHERE Username LIKE ? AND ruolo <> -1 AND ruolo <> 30 
+            ORDER BY Username ASC
+            """;
+    ArrayList<Utente> utenti = new ArrayList<>();
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Utente utente = new Utente(rs.getString("Username"));
-                    utenti.add(utente);
-                }
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Errore durante la ricerca degli utenti per hackathon: " + e.getMessage(), e);
-        }
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, username + "%"); // CORRETTO: aggiungo il %
 
-
-
-        return utenti;
-    }
-
-    public Utente findOrganizzatoreByUsername(String username) throws SQLException {
-        String sql = "SELECT Username FROM UTENTE WHERE Username = ? AND Ruolo = -1";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, username);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Utente(rs.getString("Username"));
-                }
-            }
-        }
-        return null;
-    }
-
-    public List<Utente> findAllOrganizzatori() throws SQLException {
-        List<Utente> result = new ArrayList<>();
-        String sql = "SELECT Username FROM UTENTE WHERE Ruolo = -1";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+        try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                result.add(new Utente(rs.getString("Username")));
+                Utente utente = new Utente(
+                        rs.getString("Username"),
+                        rs.getInt("Ruolo")
+                );
+                utenti.add(utente);
             }
         }
-        return result;
+    } catch (SQLException e) {
+        throw new SQLException("Errore durante il recupero di tutti gli utenti: " + e.getMessage(), e);
     }
 
+    return utenti;
 }
 
+
+public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
+    String sql = """
+            SELECT Username, Ruolo FROM UTENTE
+            WHERE Username LIKE ? AND (ruolo = 1 OR ruolo = 2)
+            ORDER BY Username ASC
+            """;
+    ArrayList<Utente> utenti = new ArrayList<>();
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, username + "%");
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Utente utente = new Utente(rs.getString("Username"), rs.getInt("Ruolo"));
+                utenti.add(utente);
+            }
+        }
+    } catch (SQLException e) {
+        throw new SQLException("Errore durante il recupero di tutti gli utenti: " + e.getMessage(), e);
+    }
+
+    return utenti;
+}
+
+public ArrayList<Team> findByHackathon(String hackathon) throws SQLException {
+    ArrayList<Team> teams = new ArrayList<>();
+
+    String sql = """
+        SELECT p.nometeam, p.username
+        FROM partecipante_hackathon p
+        WHERE p.hackathon = ?
+        ORDER BY p.nometeam NULLS LAST, p.username
+    """;
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, hackathon);
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (!rs.next()) {
+                return teams;
+            }
+
+            String nomeTeam = rs.getString("nometeam");
+            String username = rs.getString("username");
+            boolean controllo;
+
+            if (nomeTeam.isBlank()) {
+                nomeTeam = "Senza_Team";
+                controllo = false;
+            } else {
+                controllo = true;
+            }
+
+            Team team = new Team(nomeTeam, username);
+            teams.add(team);
+
+            while (rs.next() && controllo) {
+                nomeTeam = rs.getString("nometeam");
+                username = rs.getString("username");
+
+                if (nomeTeam == null) {
+                    nomeTeam = "Senza_Team";
+                    controllo = false;
+                }
+
+                if (team.NOME_TEAM.equals(nomeTeam)) {
+                    team.addPartecipante(username);
+                } else {
+                    team = new Team(nomeTeam, username);
+                    teams.add(team);
+                }
+            }
+
+            while (rs.next() && !controllo) {
+                username = rs.getString("username");
+                team.addPartecipante(username);
+            }
+        }
+    }
+
+    return teams;
+}
+
+}

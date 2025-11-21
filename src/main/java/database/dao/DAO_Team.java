@@ -83,27 +83,6 @@ public class DAO_Team {
 
      */
 
-    /*
-    public Team listaMembri(String nomeTeam, Hackathon hackathon) throws SQLException {
-        String sql = "SELECT username FROM partecipante_hackathon WHERE nometeam = ? AND hackathon = ? ORDER BY username";
-
-        Team team = new Team(nomeTeam);
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, nomeTeam);
-            stmt.setString(2, hackathon.getTitolo());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    MembroTeam partecipante = new MembroTeam(rs.getString("username"), team);
-                    team.addPartecipante(partecipante);
-                }
-            }
-        }
-
-        return team;
-    }
-     */
 
     public ArrayList<Team> findByHackathon(String hackathon) throws SQLException {
         ArrayList<Team> teams = new ArrayList<>();
@@ -145,5 +124,73 @@ public class DAO_Team {
 
         return teams;
     }
+
+    public boolean saveFile(String nomeTeam, String nomeFile, String contenuto) throws SQLException {
+        database.dao.DAO_Hackathon daoHackathon = new DAO_Hackathon();
+        Hackathon hackathon;
+        try {
+            hackathon = daoHackathon.findHackathonCorrente();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Proviamo prima a fare l'update dove progressi è NULL
+        String sqlUpdate = """
+            UPDATE team
+            SET progressi = ?
+            WHERE hackathon = ? AND nome = ? AND progressi IS NULL
+            """;
+
+        try (PreparedStatement stmtUpdate = connection.prepareStatement(sqlUpdate)) {
+            stmtUpdate.setString(1, "nome file:\n" + nomeFile + "\n\nContenuto:\n" + contenuto);
+            stmtUpdate.setString(2, hackathon.getTitolo());
+            stmtUpdate.setString(3, nomeTeam);
+
+            int updated = stmtUpdate.executeUpdate();
+            if (updated > 0) return true; // aggiornato con successo
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Se non abbiamo aggiornato nessun record, facciamo l'insert
+        String sqlInsert = "INSERT INTO team(hackathon, nome, progressi) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmtInsert = connection.prepareStatement(sqlInsert)) {
+            stmtInsert.setString(1, hackathon.getTitolo());
+            stmtInsert.setString(2, nomeTeam);
+            stmtInsert.setString(3, contenuto + " | " + nomeFile);
+
+            int inserted = stmtInsert.executeUpdate();
+            return inserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public ArrayList<String> getFile(String team, String hackathon) {
+        ArrayList<String> files = new ArrayList<>();
+
+        String sql = "SELECT progressi FROM team WHERE hackathon = ? AND nome = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, hackathon);
+            stmt.setString(2, team);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String progressi = rs.getString("progressi");
+                    files.add(progressi);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return files.isEmpty() ? null : files;
+    }
+
 
 }

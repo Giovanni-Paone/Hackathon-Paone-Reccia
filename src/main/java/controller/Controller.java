@@ -93,30 +93,19 @@ public class Controller {
                 return;
             }
 
-            switch (utente.getRuolo()) {
-                case 1:
-                    ArrayList<Invito> inviti = this.getInviti((Utente) utente);
-                    Home.main(this, (Utente) utente, inviti);
-                    break;
-                case 2:
-                    ArrayList<Invito> inviti2 = this.getInviti((Utente) utente);
-                    Home.main(this, (Utente) utente, inviti2);
-                    break;
-                case 3:
-                    MembroTeamHome.main(this, (MembroTeam) utente);
-                    break;
-                case 0:
-                    Home2.main(this, (Giudice) utente);
-                    break;
-                case -1:
-                    Home2.main(this, (Organizzatore) utente);
-                    break;
-                case 30:
-                    JOptionPane.showMessageDialog(login.getPanel1(), "Utente rimosso dalla piattaforma",
-                            "Utente rimosso",
-                            JOptionPane.ERROR_MESSAGE);
+            if(utente.getRuolo() <= 0) {
+                Home2.main(this, (Organizzatore) utente);
+            } else if(utente.getRuolo() <= 2) {
+                ArrayList<Invito> inviti = this.getInviti((Utente) utente);
+                Home.main(this, (Utente) utente, inviti);
+            } else if(utente.getRuolo() == 3) {
+                MembroTeamHome.main(this, (MembroTeam) utente);
+            } else if(utente.getRuolo() == 30) {
+                JOptionPane.showMessageDialog(login.getPanel1(), "Utente rimosso dalla piattaforma",
+                        "Utente rimosso",
+                        JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
         login.getFrameLogin().dispose();
     }
 
@@ -152,7 +141,24 @@ public class Controller {
         home.aggiornaInvitiPanel(this, utente, inviti);
     }
 
-    public boolean accettaInvito(Utente utente, Invito invito) {
+    public void rifiutaInvito(Home home, Utente utente, Invito invito) {
+        try {
+            DAO_Invito daoInvito = new DAO_Invito();
+            daoInvito.delete(utente, invito);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        this.aggiornaInviti(home, utente);
+    }
+
+    public boolean accettaInvito(Home home,Utente utente, Invito invito) {
+        if(utente.getRuolo() == 29) {
+            JOptionPane.showMessageDialog(home.getHomePanel(),
+                    "Sei stato rimosso dall'hackathon",
+                    "Negato l'accesso",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
         UtenteBase NewUtente;
         try {
             DAO_Invito daoInvito = new DAO_Invito();
@@ -160,15 +166,25 @@ public class Controller {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if (NewUtente
-        return false;
+        if (NewUtente == null) {return false;}
+        else {home.getFrameHome().dispose();}
+
+        if(NewUtente.getRuolo() == 0){
+            Home2.main(this, (Organizzatore) NewUtente);
+        } else {
+            MembroTeamHome.main(this, (MembroTeam) NewUtente);
+        }
+
+        return true;
     }
 
     public void guardaHackathon(Home2 home, UtenteBase utente) {
         Hackathon hackathon;
+        ArrayList<Organizzatore> giudici;
 
+        DAO_Hackathon daoHackathon;
         try {
-            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            daoHackathon = new DAO_Hackathon();
             hackathon = daoHackathon.findHackathonCorrente();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -183,15 +199,21 @@ public class Controller {
                     }
             } else return;
         } else {
-            gui.Hackathon.main(this, hackathon, utente);
+            try {
+                giudici = daoHackathon.findAllGiudici(hackathon);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            gui.Hackathon.main(this, hackathon, giudici, utente);
         }
     }
 
-    public void guardaHackathon(Home home, UtenteBase utente) { //arronzato, era di organizzatore
+    public void guardaHackathon(Home home, UtenteBase utente) {
         Hackathon hackathon;
-
+        ArrayList<Organizzatore> giudici;
+        DAO_Hackathon daoHackathon;
         try {
-            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            daoHackathon = new DAO_Hackathon();
             hackathon = daoHackathon.findHackathonCorrente();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -204,27 +226,68 @@ public class Controller {
                     JOptionPane.INFORMATION_MESSAGE);
         }
         else {
-            gui.Hackathon.main(this, hackathon, utente);
+            try {
+                giudici = daoHackathon.findAllGiudici(hackathon);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            gui.Hackathon.main(this, hackathon, giudici, utente);
         }
     }
 
     public void guardaHackathon(MembroTeamHome home, UtenteBase utente) { //arronzato, era di organizzatore
         Hackathon hackathon;
-
+        ArrayList<Organizzatore> giudici;
         try {
             DAO_Hackathon daoHackathon = new DAO_Hackathon();
             hackathon = daoHackathon.findHackathonCorrente();
+            giudici = daoHackathon.findAllGiudici(hackathon);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        gui.Hackathon.main(this, hackathon, utente);
+        gui.Hackathon.main(this, hackathon, giudici, utente);
 
     }
 
-    public void precedentiHackathon() {
-        //prendere dalla base di dati il precedente
-        //PrevHackathon.main(null, this);
+    public void guardaHackathon(UtenteBase utente, Hackathon hackathon) {
+        ArrayList<Organizzatore> giudici;
+        try {
+            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            giudici = daoHackathon.findAllGiudici(hackathon);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        gui.Hackathon.main(this, hackathon, giudici, utente);
+    } //per visualizzaHackathon
+
+    public void apriRegistrazioni(gui.Hackathon hackathonGUI, Hackathon hackathon,
+                                  ArrayList<Organizzatore> giudici, Organizzatore organizzatore) {
+
+        DAO_Hackathon daoHackathon = null;
+        try {
+            daoHackathon = new DAO_Hackathon();
+            daoHackathon.aperturaRegistrazioni(hackathon.getTitolo());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        hackathonGUI.getFrameHackathon().dispose();
+        gui.Hackathon.main(this, hackathon, giudici, organizzatore);
+    }
+
+    public void precedentiHackathon(VisualizzaHackathon visualizzaHackathon, String hackathon, String organizzatore, UtenteBase utente) {
+        ArrayList<model.Hackathon> hackathons = new ArrayList<>();
+        try {
+            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            hackathons = daoHackathon.getHackathons(hackathon, organizzatore);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        visualizzaHackathon.getFrameVisualizzaHackathon().dispose();
+        VisualizzaHackathon.main(this, utente, hackathons);
     }
 
     public void visualizzaIscritti(Hackathon hackathon, UtenteBase utente) {
@@ -250,8 +313,59 @@ public class Controller {
         VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
+    public void squalifica(String utente, Hackathon hackathon) {
+        try {
+            DAO_Hackathon daoHackathon =  new DAO_Hackathon();
+            daoHackathon.squalifica(utente, hackathon);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void rimuoviTeam(Team team, Hackathon hackathon) {
+        for(String u : team.partecipanti)
+            this.squalifica(u, hackathon);
+
+        try {
+            DAO_Team daoTeam= new DAO_Team();
+            daoTeam.delete(team.NOME_TEAM, hackathon);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void visualizzaFile(String team, Hackathon hackathon) {
+        if(hackathon == null){
+            try {
+                DAO_Hackathon daoHackathon = new DAO_Hackathon();
+                hackathon = daoHackathon.findHackathonCorrente();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        ArrayList<String> files;
+        try {
+            DAO_Team daoTeam = new DAO_Team();
+            files = daoTeam.getFile(team, hackathon.getTitolo());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        VisualizzaFile.main(this, files, 0);
+    }
+
+    public boolean saveFile(Team team, String nomeFile, String contenuto) {
+        try {
+            DAO_Team daoTeam = new DAO_Team();
+            return daoTeam.saveFile(team.NOME_TEAM, nomeFile, contenuto);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
-        //controlla se le date rispettano il formato
         int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
                 "Sei sicuro dei dati inseriti?",
                 "Conferma",
@@ -263,7 +377,7 @@ public class Controller {
             if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
                 JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
                         "la data iniziale o finale non sono corrette",
-                        "Erroe",
+                        "Errore",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -277,7 +391,6 @@ public class Controller {
                     (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue());
 
             try {
-                organizzatore.setHackathon(hackathon);
                 DAO_Hackathon daoHackathon = new DAO_Hackathon();
                 daoHackathon.save(hackathon);
             } catch (SQLException e) {
@@ -288,12 +401,18 @@ public class Controller {
                     "Successo",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            gui.Hackathon.main(this, hackathon, organizzatore);
+            gui.Hackathon.main(this, hackathon, null, organizzatore);
             creaHackathon.getFrameCreazioneHackathon().dispose();
         }
     }
 
     public Utente partecipa(gui.Hackathon hackathonGUI, Utente utente, Hackathon hackathon) {
+        if(utente.getRuolo() == 29) {
+            JOptionPane.showMessageDialog(hackathonGUI.getHackathonPanel(),
+                    "Sei stato rimosso",
+                    "Negato l'accesso",
+                    JOptionPane.ERROR_MESSAGE);
+        }
         if(hackathon.getMaxIscritti() < hackathon.getNPartecipantiIscritti()) {
             JOptionPane.showMessageDialog(hackathonGUI.getHackathonPanel(),
                     "l hackathon è già pieno",
@@ -308,15 +427,20 @@ public class Controller {
                 JOptionPane.INFORMATION_MESSAGE);
         if (risposta==JOptionPane.OK_OPTION) {
             Utente partecipante;
-            DAO_Hackathon daoHackathon = null;
+            ArrayList<Invito> inviti;
+
             try {
-                daoHackathon = new DAO_Hackathon();
+                DAO_Hackathon daoHackathon = new DAO_Hackathon();
                 partecipante = daoHackathon.partecipa(hackathon, utente);
+
+                DAO_Invito daoInvito = new DAO_Invito();
+                inviti = daoInvito.getInviti(utente);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
-
+            hackathonGUI.getFrameHackathon().dispose();
+            Home.main(this, utente, inviti);
             return partecipante;
 
         } else return  null;
@@ -350,9 +474,9 @@ public class Controller {
     }
 
     //apre la gui per modificare
-    public void modificaHackathon(gui.Hackathon hackathonGUI, Organizzatore organizzatore, Hackathon hackathon) { //da vedere se funziona
+    public void modificaHackathon(gui.Hackathon hackathonGUI, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) { //da vedere se funziona
         if(hackathon.getDataInizio().after(new java.util.Date())) {
-            ModificaHackathon.main(this, organizzatore, hackathon);
+            ModificaHackathon.main(this, organizzatore, hackathon, giudici);
             hackathonGUI.getFrameHackathon().dispose();
         }
         else {
@@ -364,7 +488,7 @@ public class Controller {
     }
 
     //modifica l hackathon
-    public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon) {
+    public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
         int risposta = JOptionPane.showConfirmDialog(modificaHackathon.getModificaHackathonPanel(),
                 "Sei sicuro dei dati inseriti?",
                 "Conferma",
@@ -377,7 +501,7 @@ public class Controller {
             if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
                 JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
                         "la data iniziale o finale non sono corrette",
-                        "Erroe",
+                        "Errore",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -401,7 +525,7 @@ public class Controller {
                     "Successo",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            gui.Hackathon.main(this, hackathon, organizzatore);
+            gui.Hackathon.main(this, hackathon, giudici, organizzatore);
             modificaHackathon.getFrameModificaHackathon().dispose();
         }
     }
@@ -428,6 +552,16 @@ public class Controller {
         }
         cercaUtenti.getFrameCercaUtenti().dispose();
         CercaUtenti.main(this, utente, utenti);
+    }
+
+    public void cancellaUtente(CercaUtenti cercaUtenti, UtenteBase utente, String ricercato) {
+        try {
+            DAO_Utente daoUtente = new DAO_Utente();
+            daoUtente.delete(utente.USERNAME);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        this.cercaUtentiO(cercaUtenti, utente, ricercato);
     }
 
     public void invitaMT(CercaUtenti cercaUtenti, MembroTeam mittente, UtenteBase destinatario) {
@@ -465,15 +599,6 @@ public class Controller {
             JOptionPane.showMessageDialog(cercaUtenti.getCercaUtenti(),
                     "Invito già inviato",
                     "Invito", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    public void cancellaUtente(UtenteBase utente) {
-        try {
-            DAO_Utente daoUtente = new DAO_Utente();
-            daoUtente.delete(utente.USERNAME);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 

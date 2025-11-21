@@ -8,6 +8,7 @@ import model.UtenteBase;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class ModificaHackathon {
     private static JFrame frameModificaHackathon;
@@ -37,7 +38,7 @@ public class ModificaHackathon {
     public JSpinner getLimiteComponentiSquadreSpinner() { return limiteComponentiSquadreSpinner; }
 
 
-    public ModificaHackathon(Controller controller, Organizzatore organizzatore, model.Hackathon hackathon) {
+    public ModificaHackathon(Controller controller, Organizzatore organizzatore, model.Hackathon hackathon, ArrayList<Organizzatore> giudici) {
         dataInizioSpinner.setModel(new SpinnerDateModel());
         dataInizioSpinner.setEditor(new JSpinner.DateEditor(dataInizioSpinner, "dd/MM/yyyy"));
 
@@ -63,7 +64,7 @@ public class ModificaHackathon {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.modificaHackathon(gui.ModificaHackathon.this, organizzatore, hackathon);
+                controller.modificaHackathon(gui.ModificaHackathon.this, organizzatore, hackathon, giudici);
             }
         });
     }
@@ -77,9 +78,9 @@ public class ModificaHackathon {
         limiteIscrittiSpinner.setValue(hackathon.getMaxIscritti());
     }
 
-    public static void main(Controller controller, Organizzatore organizzatore, Hackathon hackathon) {
+    public static void main(Controller controller, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
         frameModificaHackathon = new JFrame("Creazione Hackathon");
-        frameModificaHackathon.setContentPane(new gui.ModificaHackathon(controller, organizzatore, hackathon).getModificaHackathonPanel());
+        frameModificaHackathon.setContentPane(new gui.ModificaHackathon(controller, organizzatore, hackathon, giudici).getModificaHackathonPanel());
         frameModificaHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameModificaHackathon.setPreferredSize(new Dimension(400, 450));
         frameModificaHackathon.setResizable(false);

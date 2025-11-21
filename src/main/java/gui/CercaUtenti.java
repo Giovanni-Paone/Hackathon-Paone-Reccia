@@ -71,7 +71,7 @@ public class CercaUtenti {
                     throw new RuntimeException(e);
                 }
 
-                if(hackathon.getOrganizzatore().equals(utente.USERNAME)) {
+                if(hackathon != null && hackathon.getOrganizzatore().equals(utente.USERNAME)) {
                     for (Utente u : utenti) {
                         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                         JLabel label = new JLabel(u.USERNAME);
@@ -139,7 +139,7 @@ public class CercaUtenti {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.cancellaUtente(utente);
+                controller.cancellaUtente(CercaUtenti.this, utente, UsernametextField.getText());
             }
         });
     }

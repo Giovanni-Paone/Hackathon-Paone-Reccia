@@ -33,7 +33,7 @@ public class Home2 {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                controller.precedentiHackathon();
+                VisualizzaHackathon.main(controller, utente, null);
             }
         });
         cercaButton.addMouseListener(new MouseAdapter() {

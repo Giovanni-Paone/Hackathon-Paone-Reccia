@@ -77,7 +77,7 @@ public class DAO_Invito {
         String sql = """
         SELECT destinatario, mittente, datainvito, permesso FROM invito 
         WHERE destinatario = ? ORDER BY permesso DESC , datainvito DESC
-    """;
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, destinatario.USERNAME);
@@ -134,7 +134,7 @@ public class DAO_Invito {
         FROM invito
         WHERE mittente = ?
         ORDER BY datainvito DESC 
-    """;
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, mittente.USERNAME);
@@ -156,14 +156,12 @@ public class DAO_Invito {
     public UtenteBase accetta(Utente destinatario, Invito invito) throws SQLException {
         DAO_Hackathon daoHackathon = new DAO_Hackathon();
         Hackathon hackathon = daoHackathon.findHackathonCorrente();
-        UtenteBase utente;
+        UtenteBase utente = null;
 
-        if(invito.getPermesso() == true){
-            String sql = "UPDATE utente SET ruolo = ? WHERE username = ?";
-
+        if (invito.getPermesso()) {
+            String sql = "UPDATE utente SET ruolo = 0 WHERE username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setInt(1, 0);
-                stmt.setString(2, destinatario.USERNAME);
+                stmt.setString(1, destinatario.USERNAME);
                 stmt.executeUpdate();
             }
 
@@ -174,67 +172,60 @@ public class DAO_Invito {
                 stmt.executeUpdate();
             }
 
-            utente = new Giudice(destinatario.USERNAME, hackathon);
+            utente = new Organizzatore(destinatario.USERNAME, 0);
 
         } else {
+            if (hackathon.getNPartecipantiIscritti() >= hackathon.getMaxIscritti()) {return null;}
 
-            if(hackathon.getNPartecipantiIscritti() == hackathon.getMaxIscritti()){return null;}
-            else {
-                String sql = "UPDATE utente SET ruolo = ? WHERE username = ?";
+            int membriTeam = 0;
+            Team team = new Team(invito.MITTENTE);
 
-                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setInt(1, 3);
-                    stmt.setString(2, destinatario.USERNAME);
-                    stmt.executeUpdate();
-                }
-
-                if (ruolo == 0) {
-
-                } else {
-                    sql = "SELECT nometeam FROM partecipante_hackathon WHERE username = ? AND hackathon = ?";
-                    String nomeTeam = null;
-
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                        stmt.setString(1, destinatario.USERNAME);
-                        stmt.setString(2, hackathon.getTitolo());
-                        try (ResultSet rs = stmt.executeQuery()) {
-                            if (rs.next()) {
-                                nomeTeam = rs.getString("nometeam");
-                            }
-                        }
-                    }
-
-                    Team team = new Team(nomeTeam);
-
-                    sql = "SELECT username FROM partecipante_hackathon WHERE hackathon = ? AND nometeam = ?";
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                        stmt.setString(1, hackathon.getTitolo());
-                        stmt.setString(2, nomeTeam);
-                        try (ResultSet rs = stmt.executeQuery()) {
-                            while (rs.next()) {
-                                team.partecipanti.add(rs.getString("username"));
-                            }
-                        }
-                    }
-
-                    utente = new MembroTeam(destinatario.USERNAME, team);
-
-                    sql = "INSERT INTO partecipante_hackathon (hackathon, username, nometeam) VALUES (?, ?, ?)";
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                        stmt.setString(1, hackathon.getTitolo());
-                        stmt.setString(2, destinatario.USERNAME);
-                        stmt.setString(3, nomeTeam);
-                        stmt.executeUpdate();
+            String sql = "SELECT username FROM partecipante_hackathon WHERE hackathon = ? AND nometeam = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, hackathon.getTitolo());
+                stmt.setString(2, invito.MITTENTE);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        team.partecipanti.add(rs.getString("username"));
+                        membriTeam++;
                     }
                 }
+            }
 
-                sql = "DELETE FROM invito WHERE destinatario = ?";
+            if (membriTeam >= hackathon.getMaxTeamSize()) {return null;}
+
+            sql = "UPDATE utente SET ruolo = 3 WHERE username = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, destinatario.USERNAME);
+                stmt.executeUpdate();
+            }
+
+            sql = "INSERT INTO partecipante_hackathon (hackathon, username, nometeam) VALUES (?, ?, ?)";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, hackathon.getTitolo());
+                stmt.setString(2, destinatario.USERNAME);
+                stmt.setString(3, invito.MITTENTE);
+                stmt.executeUpdate();
+            }
+
+            team.addPartecipante(destinatario.USERNAME);
+            utente = new MembroTeam(destinatario.USERNAME, team);
+
+            if (membriTeam + 1 >= hackathon.getMaxTeamSize()) {
+                sql = "DELETE FROM invito WHERE mittente = ?";
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setString(1, destinatario.USERNAME);
+                    stmt.setString(1, invito.MITTENTE);
                     stmt.executeUpdate();
                 }
             }
         }
+
+        String sql = "DELETE FROM invito WHERE destinatario = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, destinatario.USERNAME);
+            stmt.executeUpdate();
+        }
+
         return utente;
     }
 
