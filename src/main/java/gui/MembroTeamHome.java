@@ -25,6 +25,8 @@ public class MembroTeamHome {
     private JPanel membriPanelContainer;
     private JPanel filePanel;
 
+    public JPanel getMembroTeamHomePanel() {return membroTeamHomePanel;}
+
     public MembroTeamHome(Controller controller, MembroTeam utente) {
         teamLabel.setText("Team: " + utente.TEAM.NOME_TEAM);
 
@@ -120,7 +122,7 @@ public class MembroTeamHome {
                         }
 
                         // <<< QUI: salva content nel DB tramite DAO (in background preferibilmente)
-                        boolean savedOk = controller.saveFile(utente.TEAM, file.getName(), content);
+                        boolean savedOk = controller.saveFile(MembroTeamHome.this, utente.TEAM, file.getName(), content);
                         try {
                             // ESEMPIO (devi sostituire con la chiamata reale al tuo DAO):
                             // DAO_Team dao = new DAO_Team();

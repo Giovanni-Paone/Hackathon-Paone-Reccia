@@ -63,8 +63,8 @@ public class Controller {
                 } else
                     JOptionPane.showMessageDialog(iscrizione.getPanel1(),
                             "Username già usato",
-                            "Successo",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -362,14 +362,22 @@ public class Controller {
         VisualizzaFile.main(this, files, 0);
     }
 
-    public boolean saveFile(Team team, String nomeFile, String contenuto) {
+    public boolean saveFile(MembroTeamHome membroTeamHome, Team team, String nomeFile, String contenuto) {
+        boolean controllo;
         try {
             DAO_Team daoTeam = new DAO_Team();
-            return daoTeam.saveFile(team.NOME_TEAM, nomeFile, contenuto);
+            controllo = daoTeam.saveFile(team.NOME_TEAM, nomeFile, contenuto);
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
+        if(!controllo) {
+            JOptionPane.showMessageDialog(membroTeamHome.getMembroTeamHomePanel(),
+                    "Nome file già usato",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else return true;
     }
 
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
@@ -397,19 +405,26 @@ public class Controller {
                     (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue(),
                     (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue());
 
+            boolean controllo;
             try {
                 DAO_Hackathon daoHackathon = new DAO_Hackathon();
-                daoHackathon.save(hackathon);
+                controllo = daoHackathon.save(hackathon);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
-                    "Hackathon creato con successo.",
-                    "Successo",
-                    JOptionPane.INFORMATION_MESSAGE);
+            if(controllo) {
+                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                        "Hackathon creato con successo.",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            gui.Hackathon.main(this, hackathon, null, organizzatore);
-            creaHackathon.getFrameCreazioneHackathon().dispose();
+                gui.Hackathon.main(this, hackathon, null, organizzatore);
+                creaHackathon.getFrameCreazioneHackathon().dispose();
+            } else
+                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                    "Titolo già usato",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -460,11 +475,12 @@ public class Controller {
                 JOptionPane.INFORMATION_MESSAGE);
         if (risposta==JOptionPane.OK_OPTION) {
             MembroTeam membroTeam;
-            try {
+            boolean controllo;
 
+            try {
                 DAO_Team daoTeam = new DAO_Team();
                 String nomeTeam = creaTeam.getNomeTeam().getText();
-                daoTeam.save(nomeTeam, utente);
+                controllo = daoTeam.save(nomeTeam, utente);
 
                 membroTeam = new MembroTeam(utente.USERNAME, new Team(nomeTeam, utente.USERNAME));
 
@@ -472,12 +488,21 @@ public class Controller {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            if(controllo) {
+                creaTeam.getFrameCreaTeam().dispose();
+                home.getFrameHome().dispose();
+                MembroTeamHome.main(this, membroTeam);
+                return membroTeam;
+            } else
+            {
+                JOptionPane.showMessageDialog(creaTeam.getCreaTeamPanel(),
+                        "Nome team già usato",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
 
-            creaTeam.getFrameCreaTeam().dispose();
-            home.getFrameHome().dispose();
-            MembroTeamHome.main(this, membroTeam);
-            return membroTeam;
-        } else {return null;}
+        } else return null;
     }
 
     //apre la gui per modificare
@@ -512,6 +537,8 @@ public class Controller {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            boolean controllo;
             try {
                 String oldtitolo = hackathon.getTitolo();
                 hackathon.cambiaTitolo(modificaHackathon.getTitoloTextField().getText());
@@ -522,18 +549,23 @@ public class Controller {
                 hackathon.cambiaMaxTeamSize((Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue());
 
                 DAO_Hackathon daoHackathon = new DAO_Hackathon();
-                daoHackathon.update(oldtitolo, organizzatore.USERNAME, hackathon);
+                controllo = daoHackathon.update(oldtitolo, organizzatore.USERNAME, hackathon);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            if (controllo) {
+                JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
+                        "Hackathon modificato con successo.",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
-                    "Hackathon modificato con successo.",
-                    "Successo",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            gui.Hackathon.main(this, hackathon, giudici, organizzatore);
-            modificaHackathon.getFrameModificaHackathon().dispose();
+                gui.Hackathon.main(this, hackathon, giudici, organizzatore);
+                modificaHackathon.getFrameModificaHackathon().dispose();
+            } else
+                JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
+                        "Titolo già usato.",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
         }
     }
 

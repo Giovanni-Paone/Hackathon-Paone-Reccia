@@ -47,7 +47,9 @@ public class DAO_Team {
             }
 
         } catch (SQLException e) {
-            throw e;
+            if ("23505".equals(e.getSQLState()))
+                return false;
+            else throw new SQLException("Errore durante il salvataggio del team: " + e.getMessage(), e);
         }
     }
 
@@ -147,8 +149,9 @@ public class DAO_Team {
             int inserted = stmtInsert.executeUpdate();
             return inserted > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            if ("23505".equals(e.getSQLState()))
+                return false;
+            else throw new SQLException("Errore durante il salvataggio del file: " + e.getMessage(), e);
         }
     }
 

@@ -33,7 +33,12 @@ public class DAO_Hackathon {
             stmt.setString(7, hackathon.getOrganizzatore());
 
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+        if ("23505".equals(e.getSQLState()))
+            return false;
+        else throw new SQLException("Errore durante il salvataggio del hackathon: " + e.getMessage(), e);
         }
+
     }
 
     public boolean update(String oldtitolo, String organizzatore, Hackathon hackathon) throws SQLException {
@@ -54,6 +59,10 @@ public class DAO_Hackathon {
             stmt.setString(7, oldtitolo);
 
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState()))
+                return false;
+            else throw new SQLException("Errore durante il salvataggio del hackathon: " + e.getMessage(), e);
         }
     }
 
