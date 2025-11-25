@@ -11,7 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Hackathon {
     private static JFrame frameHackathon;
@@ -105,14 +108,22 @@ public class Hackathon {
         progressBar1.setMaximum(hackathon.getMaxIscritti());
         progressBar1.setValue(hackathon.getNPartecipantiIscritti());
 
-        if(!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
-                hackathon.getAperturaRegistrazioni()){
+        Date oggi = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        if (hackathon.getDataFine().before(oggi)) {
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
-        }
-
-        if (!hackathon.getAperturaRegistrazioni() || utente.getRuolo() != 1) {
             partecipaButton.setVisible(false);
+        }
+        else {
+            if (!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
+                    hackathon.getAperturaRegistrazioni()) {
+                apriIscrizioniButton.setVisible(false);
+                effettuaCambiamentiButton.setVisible(false);
+            }
+
+            if (!hackathon.getAperturaRegistrazioni() || utente.getRuolo() != 1) {
+                partecipaButton.setVisible(false);
+            }
         }
     }
 

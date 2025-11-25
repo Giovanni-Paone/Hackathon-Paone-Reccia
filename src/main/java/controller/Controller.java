@@ -42,22 +42,29 @@ public class Controller {
                     "Sei sicuro dei dati inseriti?",
                     "Conferma",
                     JOptionPane.INFORMATION_MESSAGE);
+
             if(risposta==JOptionPane.OK_OPTION) {
+                boolean controllo;
                 try {
-                Utente utente = new Utente(username, 1);
                 DAO_Utente utenteDAO = new DAO_Utente();
-                utenteDAO.save(utente, password);
+                controllo = utenteDAO.save(username, password);
 
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
 
-                JOptionPane.showMessageDialog(iscrizione.getPanel1(),
-                        "Account creato con successo.",
-                        "Successo",
-                        JOptionPane.INFORMATION_MESSAGE);
-                Login.main(null);
-                iscrizione.getFrameIscrizione().dispose();
+                if(controllo) {
+                    JOptionPane.showMessageDialog(iscrizione.getPanel1(),
+                            "Account creato con successo.",
+                            "Successo",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    Login.main(null);
+                    iscrizione.getFrameIscrizione().dispose();
+                } else
+                    JOptionPane.showMessageDialog(iscrizione.getPanel1(),
+                            "Username già usato",
+                            "Successo",
+                            JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }

@@ -15,18 +15,20 @@ public class DAO_Utente {
         this.connection = ConnessioneDatabase.getInstance().connection;
     }
 
-    public boolean save(Utente utente, String password) throws SQLException {
+    public boolean save(String utente, String password) throws SQLException {
         String sql = "INSERT INTO UTENTE (Username, Password, Ruolo) VALUES (?, ?, 1)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, utente.USERNAME);
+            stmt.setString(1, utente);
             stmt.setString(2, password);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            throw new SQLException("Errore durante il salvataggio dell'utente: " + e.getMessage(), e);
+            if ("23505".equals(e.getSQLState())) {
+                return false;   // username duplicato
+            } else throw new SQLException("Errore durante il salvataggio dell'utente: " + e.getMessage(), e);
         }
     }
 
