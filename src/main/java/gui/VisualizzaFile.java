@@ -1,9 +1,6 @@
 package gui;
 
 import controller.Controller;
-import model.Hackathon;
-import model.Team;
-import model.UtenteBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,13 +17,6 @@ public class VisualizzaFile {
     private JButton button2;
 
     public VisualizzaFile(Controller controller, ArrayList<String> file, int cnt) {
-
-        if (file == null || file.isEmpty()) {
-            // nessun file trovato
-            JOptionPane.showMessageDialog(mainPanel, "File assenti", "File non trovati",
-                    JOptionPane.INFORMATION_MESSAGE);
-            VisualizzaFile.frameVisualizzaFile.dispose();
-        }
 
         JTextArea textArea = new JTextArea(file.get(cnt));
         textArea.setEditable(false);
@@ -63,6 +53,13 @@ public class VisualizzaFile {
 
 
     public static void main(Controller controller, ArrayList<String> file, int cnt) {
+        if (file == null || file.isEmpty()) {
+            // nessun file trovato
+            JOptionPane.showMessageDialog(null, "File assenti", "File non trovati",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         frameVisualizzaFile = new JFrame("File");
         frameVisualizzaFile.setContentPane(new VisualizzaFile(controller, file, cnt).mainPanel);
         frameVisualizzaFile.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

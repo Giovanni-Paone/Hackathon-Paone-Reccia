@@ -158,28 +158,30 @@ public class DAO_Team {
     public ArrayList<String> getFile(String team, String hackathon) {
         ArrayList<String> files = new ArrayList<>();
 
-        String sql = "SELECT progressi FROM team WHERE hackathon = ? AND nome = ? AND nomefile <> 'Vuoto'";
+        String sql = "SELECT nomefile, progressi FROM team WHERE hackathon = ? AND nome = ? AND nomefile <> 'Vuoto'";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setString(1, hackathon);
             stmt.setString(2, team);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
+
                     String titolo = rs.getString("nomefile");
                     String progressi = rs.getString("progressi");
+
                     files.add(titolo);
                     files.add(progressi);
                 }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        if (files.isEmpty())
-            return null;
-        else
-            return files;
+        return files;
     }
+
 
 }
