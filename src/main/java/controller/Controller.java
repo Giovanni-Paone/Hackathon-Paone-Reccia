@@ -309,7 +309,6 @@ public class Controller {
 
     public void visualizzaIscritti(Hackathon hackathon, UtenteBase utente) {
         ArrayList<Team> iscritti;
-        ArrayList<ArrayList<String>> giudiciVotanti;
 
         try {
             DAO_Utente daoUtente = new DAO_Utente();
@@ -319,42 +318,27 @@ public class Controller {
                 DAO_Voto daoVoto = new DAO_Voto();
                 if(hackathon.getDataFine().after(oggi)) {
                     daoVoto.getVoti(iscritti);
-                    giudiciVotanti = null;
                 } else {
-                    giudiciVotanti = daoVoto.getGiudiciVotanti();
+                    daoVoto.getGiudiciVotanti(iscritti);
                 }
-            } else {
-                giudiciVotanti = null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        VisualizzaIscritti.main(this, hackathon, iscritti, giudiciVotanti, utente);
+        VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
     public void visualizzaTeam(Hackathon hackathon, UtenteBase utente) {
         ArrayList<Team> iscritti;
-        ArrayList<ArrayList<String>> giudiciVotanti;
 
         try {
             DAO_Team daoTeam = new DAO_Team();
             iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
-
-            if(hackathon.getDataInizio().after(oggi)) {
-                DAO_Voto daoVoto = new DAO_Voto();
-                if(hackathon.getDataFine().after(oggi)) {
-                    daoVoto.getVoti(iscritti);
-                    giudiciVotanti = null;
-                } else {
-                    giudiciVotanti = daoVoto.getGiudiciVotanti();
-                }
-            } else {
-                giudiciVotanti = null;
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        VisualizzaIscritti.main(this, hackathon, iscritti, giudiciVotanti, utente);
+        
+        VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
     public void squalifica(String utente, Hackathon hackathon) {

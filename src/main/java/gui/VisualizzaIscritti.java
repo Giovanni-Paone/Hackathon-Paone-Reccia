@@ -98,15 +98,10 @@ public class VisualizzaIscritti {
                 }
                 else if (utente.getRuolo() == 0) {
 
-                    for (int i = 0; ; i++) {   // scorro i giudici
-                        try {
-                            String g = team.getGiudiciVotanti(i);
-                            if (g.equals(utente.USERNAME)) {
+                    for (String giudice : team.giudiciVotanti) {   // scorro i giudici
+                        if (giudice.equals(utente.USERNAME)) {
                                 buttonVoto.setVisible(false);
                                 break;
-                            }
-                        } catch (IndexOutOfBoundsException ex) {
-                            break; // finita la lista
                         }
                     }
                 }
