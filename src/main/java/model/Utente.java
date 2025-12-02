@@ -6,8 +6,6 @@ import java.util.ArrayList;
  * The type Utente.
  */
 public class Utente extends UtenteBase {
-    //la password sarà solo nella base di dati come controllo
-    private ArrayList<Invito> invitiTeam = new ArrayList();
     /**
      * Instantiates a new Utente.
      */

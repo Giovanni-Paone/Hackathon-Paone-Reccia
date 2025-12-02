@@ -1,17 +1,18 @@
 package model;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class Team {
     public final String NOME_TEAM;
     public final ArrayList<String> partecipanti = new ArrayList<>();
-    private ArrayList<File> progressi = new ArrayList<File>();
-
+    private int voto;
+    private final ArrayList<String> giudiciVotanti = new ArrayList<>();
 
     public Team(String nomeTeam) {
         this.NOME_TEAM = nomeTeam;
     }
+
+    public int getVoto() {return voto;}
 
     public Team(String nomeTeam, String creatoreP) {
         this.NOME_TEAM = nomeTeam;
@@ -22,5 +23,9 @@ public class Team {
         this.partecipanti.add(partecipante);
     }
 
-    public void aggiornaProgressi(File fp) {}
+    public void saveVoto(int voto){this.voto = voto;}
+
+    public void addGiudiciVotanti(String giudice){giudiciVotanti.add(giudice);}
+
+    public String getGiudiciVotanti(int cnt){return giudiciVotanti.get(cnt);}
 }

@@ -1,9 +1,6 @@
 package controller;
 
-import database.dao.DAO_Hackathon;
-import database.dao.DAO_Invito;
-import database.dao.DAO_Team;
-import database.dao.DAO_Utente;
+import database.dao.*;
 import gui.*;
 import model.*;
 import model.Hackathon;
@@ -11,10 +8,13 @@ import model.Invito;
 
 import javax.swing.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Controller {
+
+    public final java.sql.Date oggi = java.sql.Date.valueOf(LocalDate.now());
 
     public void eseguiIscrizione(Iscrizione iscrizione) {
         String username = iscrizione.getUsernameText().getText().trim();
@@ -25,17 +25,20 @@ public class Controller {
             JOptionPane.showMessageDialog(iscrizione.getPanel1(), "username e password non devono contenere spazi",
                     "Errore in Iscrizione",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
         else if (username.length() < 5 || password.length() < 5) {
             JOptionPane.showMessageDialog(iscrizione.getPanel1(),
                     "Username e Password devono contenere almeno 5 caratteri.",
                     "Errore in Iscrizione",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
         else if (!password.equals(conferma)) {
             JOptionPane.showMessageDialog(iscrizione.getPanel1(), "Password e conferma sono diversi",
                     "Errore in Iscrizione",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
         else {
             int risposta = JOptionPane.showConfirmDialog(iscrizione.getPanel1(),
@@ -77,12 +80,14 @@ public class Controller {
             JOptionPane.showMessageDialog(login.getPanel1(), "username e password non devono contenere spazi",
                     "Errore di login",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
         else if (username.length() < 5 || password.length() < 5) {
             JOptionPane.showMessageDialog(login.getPanel1(),
                     "Username e Password devono contenere almeno 5 caratteri.",
                     "Errore di login",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         } else {
 
             UtenteBase utente;
@@ -272,16 +277,21 @@ public class Controller {
     public void apriRegistrazioni(gui.Hackathon hackathonGUI, Hackathon hackathon,
                                   ArrayList<Organizzatore> giudici, Organizzatore organizzatore) {
 
-        DAO_Hackathon daoHackathon = null;
-        try {
-            daoHackathon = new DAO_Hackathon();
-            daoHackathon.aperturaRegistrazioni(hackathon.getTitolo());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        int risposta = JOptionPane.showConfirmDialog(hackathonGUI.getHackathonPanel(),
+                "Vuoi aprire le iscrizioni?",
+                "Conferma",
+                JOptionPane.INFORMATION_MESSAGE);
+        if (risposta==JOptionPane.OK_OPTION) {
+            try {
+                DAO_Hackathon daoHackathon = new DAO_Hackathon();
+                daoHackathon.aperturaRegistrazioni(hackathon.getTitolo());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
-        hackathonGUI.getFrameHackathon().dispose();
-        gui.Hackathon.main(this, hackathon, giudici, organizzatore);
+            hackathonGUI.getFrameHackathon().dispose();
+            gui.Hackathon.main(this, hackathon, giudici, organizzatore);
+        }
     }
 
     public void precedentiHackathon(VisualizzaHackathon visualizzaHackathon, String hackathon, String organizzatore, UtenteBase utente) {
@@ -299,25 +309,52 @@ public class Controller {
 
     public void visualizzaIscritti(Hackathon hackathon, UtenteBase utente) {
         ArrayList<Team> iscritti;
+        ArrayList<ArrayList<String>> giudiciVotanti;
+
         try {
-            DAO_Utente daoUtente;
-            daoUtente = new DAO_Utente();
+            DAO_Utente daoUtente = new DAO_Utente();
             iscritti = daoUtente.findByHackathon(hackathon.getTitolo());
+
+            if(hackathon.getDataInizio().after(oggi)) {
+                DAO_Voto daoVoto = new DAO_Voto();
+                if(hackathon.getDataFine().after(oggi)) {
+                    daoVoto.getVoti(iscritti);
+                    giudiciVotanti = null;
+                } else {
+                    giudiciVotanti = daoVoto.getGiudiciVotanti();
+                }
+            } else {
+                giudiciVotanti = null;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        VisualizzaIscritti.main(this, hackathon, iscritti, utente);
+        VisualizzaIscritti.main(this, hackathon, iscritti, giudiciVotanti, utente);
     }
 
     public void visualizzaTeam(Hackathon hackathon, UtenteBase utente) {
         ArrayList<Team> iscritti;
+        ArrayList<ArrayList<String>> giudiciVotanti;
+
         try {
             DAO_Team daoTeam = new DAO_Team();
             iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+
+            if(hackathon.getDataInizio().after(oggi)) {
+                DAO_Voto daoVoto = new DAO_Voto();
+                if(hackathon.getDataFine().after(oggi)) {
+                    daoVoto.getVoti(iscritti);
+                    giudiciVotanti = null;
+                } else {
+                    giudiciVotanti = daoVoto.getGiudiciVotanti();
+                }
+            } else {
+                giudiciVotanti = null;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        VisualizzaIscritti.main(this, hackathon, iscritti, utente);
+        VisualizzaIscritti.main(this, hackathon, iscritti, giudiciVotanti, utente);
     }
 
     public void squalifica(String utente, Hackathon hackathon) {
@@ -381,29 +418,52 @@ public class Controller {
     }
 
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
-        int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
-                "Sei sicuro dei dati inseriti?",
-                "Conferma",
-                JOptionPane.INFORMATION_MESSAGE);
-
-        if(risposta==JOptionPane.OK_OPTION) {
             Date dataInizio = (Date) creaHackathon.getDataInizioSpinner().getValue();
             Date dataFine = (Date) creaHackathon.getDataFineSpinner().getValue();
+            int limiteIscritti = (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue();
+            int limiteComponentiSquadra = (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue();
+            String titolo = creaHackathon.getTitoloTextField().getText();
+            String sede = creaHackathon.getSedeTextField().getText();
+
             if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
                 JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
                         "la data iniziale o finale non sono corrette",
                         "Errore",
                         JOptionPane.ERROR_MESSAGE);
                 return;
+            } else if (limiteIscritti < 4) {
+                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                        "Non possono esserci meno di 4 iscritti",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (limiteComponentiSquadra < 2) {
+                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                        "Non possono esserci meno di 2 squadre",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (titolo.isEmpty() || sede.isEmpty()) {
+                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                        "Dati mancanti",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
-            Hackathon hackathon = new Hackathon(creaHackathon.getTitoloTextField().getText(),
-                    creaHackathon.getSedeTextField().getText(),
+        int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
+                "Sei sicuro dei dati inseriti?",
+                "Conferma",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        if(risposta==JOptionPane.OK_OPTION) {
+            Hackathon hackathon = new Hackathon(titolo,
+                    sede,
                     organizzatore.USERNAME,
                     dataInizio,
                     dataFine,
-                    (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue(),
-                    (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue());
+                    limiteIscritti,
+                    limiteComponentiSquadra);
 
             boolean controllo;
             try {
@@ -469,17 +529,26 @@ public class Controller {
     };
 
     public MembroTeam creaTeam(CreaTeam creaTeam, Utente utente, Home home) {
+        String nomeTeam = creaTeam.getNomeTeam().getText();
+        if (nomeTeam.isEmpty()) {
+            JOptionPane.showMessageDialog(creaTeam.getCreaTeamPanel(),
+                    "Nome team non inserito",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
         int risposta = JOptionPane.showConfirmDialog(creaTeam.getCreaTeamPanel(),
                 "Sei sicuro del nome inserito?",
                 "Conferma",
                 JOptionPane.INFORMATION_MESSAGE);
+
         if (risposta==JOptionPane.OK_OPTION) {
             MembroTeam membroTeam;
             boolean controllo;
 
             try {
                 DAO_Team daoTeam = new DAO_Team();
-                String nomeTeam = creaTeam.getNomeTeam().getText();
                 controllo = daoTeam.save(nomeTeam, utente);
 
                 membroTeam = new MembroTeam(utente.USERNAME, new Team(nomeTeam, utente.USERNAME));
@@ -521,14 +590,13 @@ public class Controller {
 
     //modifica l hackathon
     public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
-        int risposta = JOptionPane.showConfirmDialog(modificaHackathon.getModificaHackathonPanel(),
-                "Sei sicuro dei dati inseriti?",
-                "Conferma",
-                JOptionPane.INFORMATION_MESSAGE);
-
-        if(risposta==JOptionPane.OK_OPTION) {
             Date dataInizio = (Date) modificaHackathon.getDataInizioSpinner().getValue();
             Date dataFine = (Date) modificaHackathon.getDataFineSpinner().getValue();
+            int limiteIscritti = (Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue();
+            int limiteComponentiSquadra = (Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue();
+            String titolo = modificaHackathon.getTitoloTextField().getText();
+            String sede = modificaHackathon.getSedeTextField().getText();
+
 
             if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
                 JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
@@ -536,17 +604,42 @@ public class Controller {
                         "Errore",
                         JOptionPane.ERROR_MESSAGE);
                 return;
+            } else if (limiteIscritti < 4) {
+                JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
+                        "Non possono esserci meno di 4 iscritti",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (limiteComponentiSquadra < 2) {
+                JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
+                        "Non possono esserci meno di 2 squadre",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (titolo.isEmpty() || sede.isEmpty()) {
+                JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
+                        "Dati mancanti",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
             }
+
+        int risposta = JOptionPane.showConfirmDialog(modificaHackathon.getModificaHackathonPanel(),
+                "Sei sicuro dei dati inseriti?",
+                "Conferma",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        if(risposta==JOptionPane.OK_OPTION) {
 
             boolean controllo;
             try {
                 String oldtitolo = hackathon.getTitolo();
-                hackathon.cambiaTitolo(modificaHackathon.getTitoloTextField().getText());
-                hackathon.cambiaSede(modificaHackathon.getSedeTextField().getText());
+                hackathon.cambiaTitolo(titolo);
+                hackathon.cambiaSede(sede);
                 hackathon.cambiaInizio(dataInizio);
                 hackathon.cambiaFine(dataFine);
-                hackathon.cambiaMaxIscritti((Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue());
-                hackathon.cambiaMaxTeamSize((Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue());
+                hackathon.cambiaMaxIscritti(limiteIscritti);
+                hackathon.cambiaMaxTeamSize(limiteComponentiSquadra);
 
                 DAO_Hackathon daoHackathon = new DAO_Hackathon();
                 controllo = daoHackathon.update(oldtitolo, organizzatore.USERNAME, hackathon);
@@ -638,6 +731,30 @@ public class Controller {
             JOptionPane.showMessageDialog(cercaUtenti.getCercaUtenti(),
                     "Invito già inviato",
                     "Invito", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void aggiungiVoto(Team team, Hackathon hackathon, UtenteBase utente) {
+        JSpinner spinner = new JSpinner(
+                new SpinnerNumberModel(1, 1, 10, 1)
+        );
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                spinner,
+                "Inserisci il voto (1-10)",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            int voto = (int) spinner.getValue();
+            try {
+                DAO_Voto daoVoto = new DAO_Voto();
+                daoVoto.save(hackathon.getTitolo(), team.NOME_TEAM, utente.USERNAME, voto);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

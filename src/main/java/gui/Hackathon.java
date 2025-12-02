@@ -11,14 +11,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Hackathon {
     private static JFrame frameHackathon;
-    private JPanel hackathonPanel;;
+    private JPanel hackathonPanel;
     private JLabel titoloLabel;
     private JLabel sedeLabel;
     private JLabel organizzatoreLabel;
@@ -48,7 +45,7 @@ public class Hackathon {
     public JPanel getHackathonPanel() {return hackathonPanel;}
 
     public Hackathon(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, UtenteBase utente) {
-        setHackathon(hackathon, utente);
+        setHackathon(controller, hackathon, utente);
         aggiornaGiudiciPanel(giudici);
 
         teamButton.addActionListener(new ActionListener() {
@@ -79,10 +76,6 @@ public class Hackathon {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                JOptionPane.showConfirmDialog(hackathonPanel,
-                        "Vuoi aprire le iscrizioni?",
-                        "Conferma",
-                        JOptionPane.INFORMATION_MESSAGE);
                 controller.apriRegistrazioni(Hackathon.this, hackathon, giudici, (Organizzatore) utente);
             }
         });
@@ -95,7 +88,7 @@ public class Hackathon {
         });
     }
 
-    private void setHackathon(model.Hackathon hackathon, UtenteBase utente) {
+    private void setHackathon(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
         titolo.setText(hackathon.getTitolo());
         sede.setText(hackathon.getSede());
         organizzatore.setText(hackathon.getOrganizzatore());
@@ -108,11 +101,11 @@ public class Hackathon {
         progressBar1.setMaximum(hackathon.getMaxIscritti());
         progressBar1.setValue(hackathon.getNPartecipantiIscritti());
 
-        Date oggi = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        if (hackathon.getDataFine().before(oggi)) {
+        if (hackathon.getDataFine().before(controller.oggi)) {
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
             partecipaButton.setVisible(false);
+            partecipantiButton.setVisible(false);
         }
         else {
             if (!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
@@ -121,9 +114,11 @@ public class Hackathon {
                 effettuaCambiamentiButton.setVisible(false);
             }
 
-            if (!hackathon.getAperturaRegistrazioni() || utente.getRuolo() != 1) {
+            if (!hackathon.getAperturaRegistrazioni()) {
+                partecipantiButton.setVisible(false);
                 partecipaButton.setVisible(false);
-            }
+            } else if(utente.getRuolo() != 1)
+                partecipaButton.setVisible(false);
         }
     }
 

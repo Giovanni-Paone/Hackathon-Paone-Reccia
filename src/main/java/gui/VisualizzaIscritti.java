@@ -7,49 +7,67 @@ import model.UtenteBase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class VisualizzaIscritti {
+
     private static JFrame frameVisualizzaIscritti;
     private JPanel visualizzaIscrittiPanel;
-    private JScrollBar scrollBar1;
     private JScrollPane scrollPane;
 
-    public VisualizzaIscritti(Controller controller, Hackathon hackathon, ArrayList<Team> teams, UtenteBase utente) {
+    public VisualizzaIscritti(Controller controller, Hackathon hackathon,
+                              ArrayList<Team> teams, UtenteBase utente) {
+
         JPanel panelTeamContainer = new JPanel();
         panelTeamContainer.setLayout(new BoxLayout(panelTeamContainer, BoxLayout.Y_AXIS));
 
+        boolean primaDellaDataInizio = controller.oggi.before(hackathon.getDataInizio());
+        boolean dopoLaDataFine = controller.oggi.after(hackathon.getDataFine());
+
+        // ============================================================
+        //          COSTRUZIONE INTERFACCIA PER OGNI TEAM
+        // ============================================================
         for (Team team : teams) {
+
             JPanel panelTeam = new JPanel();
             panelTeam.setLayout(new BoxLayout(panelTeam, BoxLayout.Y_AXIS));
             panelTeam.setBorder(BorderFactory.createTitledBorder("Team: " + team.NOME_TEAM));
 
             JPanel panelBottoni = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+            // ---------------------------------------------------- //
+            //             BOTTONE RIMUOVI TEAM
+            // ---------------------------------------------------- //
             JButton buttonRimuoviTeam = new JButton("Rimuovi");
-            Date oggi = Date.valueOf(LocalDate.now());
-            if ((utente.getRuolo() > 0 || team.NOME_TEAM.equals("Senza_Team") || hackathon.getDataFine().before(oggi)
-                   || (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME)))
-                ) {
+
+            if (utente.getRuolo() > 0 ||
+                    team.NOME_TEAM.equals("Senza_Team") || hackathon.getDataFine().before(controller.oggi) ||
+                    (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME))) {
                 buttonRimuoviTeam.setVisible(false);
             }
+
             buttonRimuoviTeam.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
                     controller.rimuoviTeam(team, hackathon);
                     panelTeamContainer.remove(panelTeam);
+                    panelTeamContainer.revalidate();
+                    panelTeamContainer.repaint();
                 }
             });
 
-            //fare il bottone aggiungi voto
-
+            // ---------------------------------------------------- //
+            //                    BOTTONE FILE
+            // ---------------------------------------------------- //
             JButton buttonFile = new JButton("File");
-            if (((utente.getRuolo() > 0 || (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME)))
-                && hackathon.getDataFine().after(oggi)) || team.NOME_TEAM.equals("Senza_Team")) {
+
+            if (((utente.getRuolo() > 0 ||
+                    (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME)))
+                    && hackathon.getDataFine().after(controller.oggi))
+                    || team.NOME_TEAM.equals("Senza_Team")) {
                 buttonFile.setVisible(false);
             }
+
             buttonFile.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -57,19 +75,76 @@ public class VisualizzaIscritti {
                 }
             });
 
+            // ===================================================== //
+            //                   SE SI PUÒ MOSTRARE IL VOTO
+            // ===================================================== //
+            if (!primaDellaDataInizio) {
+
+                JLabel labelVoto = new JLabel();
+
+                if (dopoLaDataFine) {
+                    labelVoto.setText("Voto: " + team.getVoto());
+                } else {
+                    labelVoto.setVisible(false);
+                }
+
+                // ------------------------------------------------ //
+                //               BOTTONE AGGIUNGI VOTO
+                // ------------------------------------------------ //
+                JButton buttonVoto = new JButton("Aggiungi voto");
+
+                if (dopoLaDataFine) {
+                    buttonVoto.setVisible(false);
+                }
+                else if (utente.getRuolo() == 0) {
+
+                    for (int i = 0; ; i++) {   // scorro i giudici
+                        try {
+                            String g = team.getGiudiciVotanti(i);
+                            if (g.equals(utente.USERNAME)) {
+                                buttonVoto.setVisible(false);
+                                break;
+                            }
+                        } catch (IndexOutOfBoundsException ex) {
+                            break; // finita la lista
+                        }
+                    }
+                }
+                else {
+                    buttonVoto.setVisible(false);
+                }
+
+                buttonVoto.addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        controller.aggiungiVoto(team, hackathon, utente);
+                    }
+                });
+
+                panelBottoni.add(labelVoto);
+                panelBottoni.add(buttonVoto);
+            }
+
+            // Bottoni base
             panelBottoni.add(buttonRimuoviTeam);
             panelBottoni.add(buttonFile);
             panelTeam.add(panelBottoni);
 
+            // ===================================================== //
+            //                     PARTECIPANTI
+            // ===================================================== //
             for (String username : team.partecipanti) {
                 JPanel panelPartecipante = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 panelPartecipante.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
 
                 JLabel labelUser = new JLabel(username);
                 JButton buttonRimuoviUser = new JButton("Rimuovi");
-                if (utente.getRuolo() != 0 && !hackathon.getOrganizzatore().equals(utente.USERNAME)) {
+
+                if (utente.getRuolo() != 0 &&
+                        !hackathon.getOrganizzatore().equals(utente.USERNAME)) {
                     buttonRimuoviUser.setVisible(false);
                 }
+
                 buttonRimuoviUser.addMouseListener(new java.awt.event.MouseAdapter() {
                     @Override
                     public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -90,16 +165,18 @@ public class VisualizzaIscritti {
         scrollPane = new JScrollPane(panelTeamContainer);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        visualizzaIscrittiPanel.setLayout(new BorderLayout());
+        visualizzaIscrittiPanel = new JPanel(new BorderLayout());
         visualizzaIscrittiPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
+    public static void main(Controller controller, Hackathon hackathon,
+                            ArrayList<Team> teams, UtenteBase utente) {
 
-
-
-    public static void main(Controller controller, model.Hackathon hackathon, ArrayList<Team> teams, UtenteBase utente) {
         frameVisualizzaIscritti = new JFrame("Iscritti");
-        frameVisualizzaIscritti.setContentPane(new VisualizzaIscritti(controller, hackathon, teams, utente).visualizzaIscrittiPanel);
+        frameVisualizzaIscritti.setContentPane(
+                new VisualizzaIscritti(controller, hackathon, teams, utente).visualizzaIscrittiPanel
+        );
+
         frameVisualizzaIscritti.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameVisualizzaIscritti.setPreferredSize(new Dimension(450, 300));
         frameVisualizzaIscritti.setResizable(true);
