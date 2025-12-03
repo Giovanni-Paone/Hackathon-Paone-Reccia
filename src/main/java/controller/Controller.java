@@ -311,17 +311,8 @@ public class Controller {
         ArrayList<Team> iscritti;
 
         try {
-            DAO_Utente daoUtente = new DAO_Utente();
-            iscritti = daoUtente.findByHackathon(hackathon.getTitolo());
-
-            if(hackathon.getDataInizio().after(oggi)) {
-                DAO_Voto daoVoto = new DAO_Voto();
-                if(hackathon.getDataFine().after(oggi)) {
-                    daoVoto.getVoti(iscritti);
-                } else {
-                    daoVoto.getGiudiciVotanti(iscritti);
-                }
-            }
+            DAO_Team daoTeam = new DAO_Team();
+            iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -332,12 +323,21 @@ public class Controller {
         ArrayList<Team> iscritti;
 
         try {
-            DAO_Team daoTeam = new DAO_Team();
-            iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+        DAO_Team daoTeam = new DAO_Team();
+
+            if(hackathon.getDataFine().before(oggi)) {
+                //chiamata con voti
+                iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
+            } else if(hackathon.getDataInizio().before(oggi)) {
+                //chiamata con giudici votanti
+                iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+            } else {
+                iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        
+
         VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 

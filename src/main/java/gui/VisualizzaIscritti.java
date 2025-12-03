@@ -21,8 +21,8 @@ public class VisualizzaIscritti {
         JPanel panelTeamContainer = new JPanel();
         panelTeamContainer.setLayout(new BoxLayout(panelTeamContainer, BoxLayout.Y_AXIS));
 
-        boolean primaDellaDataInizio = controller.oggi.before(hackathon.getDataInizio());
-        boolean dopoLaDataFine = controller.oggi.after(hackathon.getDataFine());
+        boolean primaDataInizio = controller.oggi.before(hackathon.getDataInizio());
+        boolean dopoDataFine = controller.oggi.after(hackathon.getDataFine());
 
         // ============================================================
         //          COSTRUZIONE INTERFACCIA PER OGNI TEAM
@@ -78,11 +78,11 @@ public class VisualizzaIscritti {
             // ===================================================== //
             //                   SE SI PUÒ MOSTRARE IL VOTO
             // ===================================================== //
-            if (!primaDellaDataInizio) {
+            if (!primaDataInizio) {
 
                 JLabel labelVoto = new JLabel();
 
-                if (dopoLaDataFine) {
+                if (dopoDataFine) {
                     labelVoto.setText("Voto: " + team.getVoto());
                 } else {
                     labelVoto.setVisible(false);
@@ -93,7 +93,7 @@ public class VisualizzaIscritti {
                 // ------------------------------------------------ //
                 JButton buttonVoto = new JButton("Aggiungi voto");
 
-                if (dopoLaDataFine) {
+                if (dopoDataFine) {
                     buttonVoto.setVisible(false);
                 }
                 else if (utente.getRuolo() == 0) {

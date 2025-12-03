@@ -204,7 +204,6 @@ public ArrayList<Utente> findByKey(String username) throws SQLException {
     return utenti;
 }
 
-
 public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
     String sql = """
             SELECT Username, Ruolo FROM UTENTE
@@ -227,65 +226,6 @@ public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
     }
 
     return utenti;
-}
-
-public ArrayList<Team> findByHackathon(String hackathon) throws SQLException {
-    ArrayList<Team> teams = new ArrayList<>();
-
-    String sql = """
-        SELECT p.nometeam, p.username
-        FROM partecipante_hackathon p
-        WHERE p.hackathon = ?
-        ORDER BY p.nometeam NULLS LAST, p.username
-    """;
-
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, hackathon);
-
-        try (ResultSet rs = stmt.executeQuery()) {
-            if (!rs.next()) {
-                return teams;
-            }
-
-            String nomeTeam = rs.getString("nometeam");
-            String username = rs.getString("username");
-            boolean controllo;
-
-            if (nomeTeam.isBlank()) {
-                nomeTeam = "Senza_Team";
-                controllo = false;
-            } else {
-                controllo = true;
-            }
-
-            Team team = new Team(nomeTeam, username);
-            teams.add(team);
-
-            while (rs.next() && controllo) {
-                nomeTeam = rs.getString("nometeam");
-                username = rs.getString("username");
-
-                if (nomeTeam == null) {
-                    nomeTeam = "Senza_Team";
-                    controllo = false;
-                }
-
-                if (team.NOME_TEAM.equals(nomeTeam)) {
-                    team.addPartecipante(username);
-                } else {
-                    team = new Team(nomeTeam, username);
-                    teams.add(team);
-                }
-            }
-
-            while (rs.next() && !controllo) {
-                username = rs.getString("username");
-                team.addPartecipante(username);
-            }
-        }
-    }
-
-    return teams;
 }
 
 }

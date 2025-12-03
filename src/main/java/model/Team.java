@@ -17,10 +17,15 @@ public class Team {
         this.partecipanti.add(creatoreP);
     }
 
+    public Team(String nomeTeam, String creatoreP, int voto) {
+        this.NOME_TEAM = nomeTeam;
+        this.partecipanti.add(creatoreP);
+        this.voto = voto;
+    }
+
     public void addPartecipante(String partecipante){
         this.partecipanti.add(partecipante);
     }
 
-    public void saveVoto(int voto){this.voto = voto;}
     public int getVoto() {return voto;}
 }
