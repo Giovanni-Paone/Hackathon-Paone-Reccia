@@ -9,7 +9,7 @@ package model;
 public class Utente {
     /**
      * Lo username univoco dell'utente. È un campo immutabile (final)
-     * e funge da identificativo primario.
+     * e funge da identificativo primario
      */
     public final String USERNAME;
 
