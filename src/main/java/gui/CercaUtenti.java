@@ -22,7 +22,7 @@ public class CercaUtenti {
     public JFrame getFrameCercaUtenti() {return frameCercaUtenti;}
     public JPanel getCercaUtenti() {return cercaUtentiPanel;}
 
-    public CercaUtenti(Controller controller, UtenteBase utente, ArrayList<Utente> utenti) {
+    public CercaUtenti(Controller controller, Utente utente, ArrayList<Utente> utenti) {
         UsernametextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,7 +114,7 @@ public class CercaUtenti {
         }
     }
 
-    private void invitaMTMouseListener(Controller controller, JButton invita, UtenteBase mittente, UtenteBase destinatario) {
+    private void invitaMTMouseListener(Controller controller, JButton invita, Utente mittente, Utente destinatario) {
         invita.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -124,7 +124,7 @@ public class CercaUtenti {
         });
     }
 
-    private void invitaOMouseListener(Controller controller, JButton invita, UtenteBase mittente, UtenteBase destinatario) {
+    private void invitaOMouseListener(Controller controller, JButton invita, Utente mittente, Utente destinatario) {
         invita.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -134,7 +134,7 @@ public class CercaUtenti {
         });
     }
 
-    private void rimuoviMouseListener(Controller controller, JButton rimuovi, UtenteBase utente) {
+    private void rimuoviMouseListener(Controller controller, JButton rimuovi, Utente utente) {
         rimuovi.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -144,7 +144,7 @@ public class CercaUtenti {
         });
     }
 
-    public static void main(Controller controller, UtenteBase utente, ArrayList<Utente> utenti) {
+    public static void main(Controller controller, Utente utente, ArrayList<Utente> utenti) {
         frameCercaUtenti = new JFrame("Utenti");
         frameCercaUtenti.setContentPane(new CercaUtenti(controller, utente, utenti).cercaUtentiPanel);
         frameCercaUtenti.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

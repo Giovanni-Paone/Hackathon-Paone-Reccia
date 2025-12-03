@@ -1,7 +1,7 @@
 package gui;
 
 import controller.Controller;
-import model.UtenteBase;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class Home2 {
 
     public JPanel getOrganizzatoreHomePanel() {return OrganizzatoreHomePanel;}
 
-    public Home2(Controller controller, UtenteBase utente) {
+    public Home2(Controller controller, Utente utente) {
         if(utente.getRuolo() == 0){
             cercaButton.setVisible(false);
         }
@@ -45,7 +45,7 @@ public class Home2 {
         });
     }
 
-    public static void main(Controller controller, UtenteBase utente) {
+    public static void main(Controller controller, Utente utente) {
         frameOrganizzatoreHome = new JFrame("Home");
         frameOrganizzatoreHome.setContentPane(new Home2(controller, utente).OrganizzatoreHomePanel);
         frameOrganizzatoreHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

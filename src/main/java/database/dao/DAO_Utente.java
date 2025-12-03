@@ -91,7 +91,7 @@ public class DAO_Utente {
     }
 
 
-    public UtenteBase login(String username, String password) throws SQLException {
+    public Utente login(String username, String password) throws SQLException {
         String sql = "SELECT Username, Ruolo FROM UTENTE WHERE Username = ? AND Password = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -103,7 +103,7 @@ public class DAO_Utente {
                     int ruolo = rs.getInt("Ruolo");
                     String user = rs.getString("Username");
 
-                    UtenteBase utente;
+                    Utente utente;
 
                     switch (ruolo) {
                         case -1: //Organizzatore
@@ -159,7 +159,7 @@ public class DAO_Utente {
 
                             break;
                         case 30:
-                            utente = new UtenteBase(user, 30);
+                            utente = new Utente(user, 30);
                             break;
 
                         default:

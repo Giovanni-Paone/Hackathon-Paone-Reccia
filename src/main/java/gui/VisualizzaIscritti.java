@@ -3,7 +3,7 @@ package gui;
 import controller.Controller;
 import model.Hackathon;
 import model.Team;
-import model.UtenteBase;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ public class VisualizzaIscritti {
     private JScrollPane scrollPane;
 
     public VisualizzaIscritti(Controller controller, Hackathon hackathon,
-                              ArrayList<Team> teams, UtenteBase utente) {
+                              ArrayList<Team> teams, Utente utente) {
 
         JPanel panelTeamContainer = new JPanel();
         panelTeamContainer.setLayout(new BoxLayout(panelTeamContainer, BoxLayout.Y_AXIS));
@@ -165,7 +165,7 @@ public class VisualizzaIscritti {
     }
 
     public static void main(Controller controller, Hackathon hackathon,
-                            ArrayList<Team> teams, UtenteBase utente) {
+                            ArrayList<Team> teams, Utente utente) {
 
         frameVisualizzaIscritti = new JFrame("Iscritti");
         frameVisualizzaIscritti.setContentPane(

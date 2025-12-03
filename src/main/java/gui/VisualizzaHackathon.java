@@ -1,7 +1,7 @@
 package gui;
 
 import controller.Controller;
-import model.UtenteBase;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,7 @@ public class VisualizzaHackathon {
 
     public JFrame getFrameVisualizzaHackathon() {return frameVisualizzaHackathon;}
 
-    VisualizzaHackathon(Controller controller, UtenteBase utente, ArrayList<model.Hackathon> hackathons) {
+    VisualizzaHackathon(Controller controller, Utente utente, ArrayList<model.Hackathon> hackathons) {
         titoloTextField.addActionListener(e -> organizzatoreTextField.requestFocus());
         organizzatoreTextField.addActionListener(e ->
                 controller.precedentiHackathon(VisualizzaHackathon.this, titoloTextField.getText(), organizzatoreTextField.getText().trim(), utente)
@@ -153,7 +153,7 @@ public class VisualizzaHackathon {
 
 
 
-    public static void main(Controller controller, UtenteBase utente, ArrayList<model.Hackathon> hackathons) {
+    public static void main(Controller controller, Utente utente, ArrayList<model.Hackathon> hackathons) {
         frameVisualizzaHackathon = new JFrame("hackathons");
         frameVisualizzaHackathon.setContentPane(new VisualizzaHackathon(controller, utente, hackathons).mainPanel);
         frameVisualizzaHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

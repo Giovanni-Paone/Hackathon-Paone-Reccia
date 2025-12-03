@@ -1,36 +1,39 @@
+/**
+ * Classe base (Superclasse) che rappresenta un utente generico all'interno
+ * del sistema, definendo le proprietà fondamentali come lo username e il ruolo.
+ * Tutte le tipologie specifiche di utente (es. Organizzatore) dovrebbero
+ * estendere questa classe.
+ */
 package model;
 
-import java.util.ArrayList;
-
-/**
- * The type Utente.
- */
-public class Utente extends UtenteBase {
+public class Utente {
     /**
-     * Instantiates a new Utente.
+     * Lo username univoco dell'utente. È un campo immutabile (final)
+     * e funge da identificativo primario.
      */
-    public Utente(String USERNAME, int ruolo) {super(USERNAME, ruolo);}
+    public final String USERNAME;
 
     /**
-     * Gets login.
+     * Un codice numerico che rappresenta il ruolo o il livello di accesso
+     * dell'utente nel sistema.
+     */
+    private int ruolo;
+
+    /**
+     * Costruisce un oggetto Utente.
      *
-     * @return the login
+     * @param username L'identificativo testuale univoco per l'utente (nickname).
+     * @param ruolo Il codice numerico che definisce il ruolo dell'utente.
      */
-
-
-    /* probabilmente funzioni inutili che possono solo esseere fatte con dao, gui e controller
-    public Invito getInvito(int indice){return invitiTeam.get(indice);}
-    public void addInvito(Invito invito){invitiTeam.add(invito);}
-
-    public void accettaInvitoTeam(int indice){} //diventa partecipante del team
-    public void rifiutaInvito(int indice){
-        this.invitiTeam.remove(indice);
+    public Utente(String username, int ruolo) {
+        this.USERNAME = username;
+        this.ruolo = ruolo;
     }
 
-    public void accettaInvitoGiudice(){}//diventa giudice
-
-    //public void registrazione(Hackathon HACKATHON){} // diventa partecipante
-    // funzione rimossa perchè forse verrà risolta con la base di dati
-
+    /**
+     * Restituisce il codice numerico del ruolo assegnato all'utente.
+     *
+     * @return Il codice intero che rappresenta il ruolo.
      */
+    public int getRuolo() {return ruolo;}
 }

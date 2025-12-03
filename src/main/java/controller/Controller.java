@@ -90,7 +90,7 @@ public class Controller {
             return;
         } else {
 
-            UtenteBase utente;
+            Utente utente;
             try {
                 DAO_Utente daoUtente = new DAO_Utente();
                 utente = daoUtente.login(username, password);
@@ -171,7 +171,7 @@ public class Controller {
                     JOptionPane.ERROR_MESSAGE);
         }
 
-        UtenteBase NewUtente;
+        Utente NewUtente;
         try {
             DAO_Invito daoInvito = new DAO_Invito();
             NewUtente = daoInvito.accetta(utente, invito);
@@ -190,7 +190,7 @@ public class Controller {
         return true;
     }
 
-    public void guardaHackathon(Home2 home, UtenteBase utente) {
+    public void guardaHackathon(Home2 home, Utente utente) {
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
 
@@ -220,7 +220,7 @@ public class Controller {
         }
     }
 
-    public void guardaHackathon(Home home, UtenteBase utente) {
+    public void guardaHackathon(Home home, Utente utente) {
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
         DAO_Hackathon daoHackathon;
@@ -247,7 +247,7 @@ public class Controller {
         }
     }
 
-    public void guardaHackathon(MembroTeamHome home, UtenteBase utente) { //arronzato, era di organizzatore
+    public void guardaHackathon(MembroTeamHome home, Utente utente) { //arronzato, era di organizzatore
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
         try {
@@ -262,7 +262,7 @@ public class Controller {
 
     }
 
-    public void guardaHackathon(UtenteBase utente, Hackathon hackathon) {
+    public void guardaHackathon(Utente utente, Hackathon hackathon) {
         ArrayList<Organizzatore> giudici;
         try {
             DAO_Hackathon daoHackathon = new DAO_Hackathon();
@@ -294,7 +294,7 @@ public class Controller {
         }
     }
 
-    public void precedentiHackathon(VisualizzaHackathon visualizzaHackathon, String hackathon, String organizzatore, UtenteBase utente) {
+    public void precedentiHackathon(VisualizzaHackathon visualizzaHackathon, String hackathon, String organizzatore, Utente utente) {
         ArrayList<model.Hackathon> hackathons = new ArrayList<>();
         try {
             DAO_Hackathon daoHackathon = new DAO_Hackathon();
@@ -307,7 +307,7 @@ public class Controller {
         VisualizzaHackathon.main(this, utente, hackathons);
     }
 
-    public void visualizzaIscritti(Hackathon hackathon, UtenteBase utente) {
+    public void visualizzaIscritti(Hackathon hackathon, Utente utente) {
         ArrayList<Team> iscritti;
 
         try {
@@ -328,7 +328,7 @@ public class Controller {
         VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
-    public void visualizzaTeam(Hackathon hackathon, UtenteBase utente) {
+    public void visualizzaTeam(Hackathon hackathon, Utente utente) {
         ArrayList<Team> iscritti;
 
         try {
@@ -646,7 +646,7 @@ public class Controller {
         }
     }
 
-    public void cercaUtentiU(CercaUtenti cercaUtenti, UtenteBase utente, String ricercato) {
+    public void cercaUtentiU(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         ArrayList<Utente> utenti;
         try {
             DAO_Utente daoUtente = new DAO_Utente();
@@ -658,7 +658,7 @@ public class Controller {
         CercaUtenti.main(this, utente, utenti);
     }
 
-    public void cercaUtentiO(CercaUtenti cercaUtenti, UtenteBase utente, String ricercato) {
+    public void cercaUtentiO(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         ArrayList<Utente> utenti;
         try {
             DAO_Utente daoUtente = new DAO_Utente();
@@ -670,7 +670,7 @@ public class Controller {
         CercaUtenti.main(this, utente, utenti);
     }
 
-    public void cancellaUtente(CercaUtenti cercaUtenti, UtenteBase utente, String ricercato) {
+    public void cancellaUtente(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         try {
             DAO_Utente daoUtente = new DAO_Utente();
             daoUtente.delete(utente.USERNAME);
@@ -680,7 +680,7 @@ public class Controller {
         this.cercaUtentiO(cercaUtenti, utente, ricercato);
     }
 
-    public void invitaMT(CercaUtenti cercaUtenti, MembroTeam mittente, UtenteBase destinatario) {
+    public void invitaMT(CercaUtenti cercaUtenti, MembroTeam mittente, Utente destinatario) {
         boolean controllo = false;
 
         try {
@@ -699,7 +699,7 @@ public class Controller {
         }
     }
 
-    public void invitaO(CercaUtenti cercaUtenti, Organizzatore mittente, UtenteBase destinatario) {
+    public void invitaO(CercaUtenti cercaUtenti, Organizzatore mittente, Utente destinatario) {
         boolean controllo = false;
 
         try {
@@ -718,7 +718,7 @@ public class Controller {
         }
     }
 
-    public void aggiungiVoto(Team team, Hackathon hackathon, UtenteBase utente) {
+    public void aggiungiVoto(Team team, Hackathon hackathon, Utente utente) {
         JSpinner spinner = new JSpinner(
                 new SpinnerNumberModel(1, 1, 10, 1)
         );

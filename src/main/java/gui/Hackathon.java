@@ -3,7 +3,6 @@ package gui;
 import controller.Controller;
 import model.Organizzatore;
 import model.Utente;
-import model.UtenteBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +43,7 @@ public class Hackathon {
     public JFrame getFrameHackathon() {return frameHackathon;}
     public JPanel getHackathonPanel() {return hackathonPanel;}
 
-    public Hackathon(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, UtenteBase utente) {
+    public Hackathon(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, Utente utente) {
         setHackathon(controller, hackathon, utente);
         aggiornaGiudiciPanel(giudici);
 
@@ -88,7 +87,7 @@ public class Hackathon {
         });
     }
 
-    private void setHackathon(Controller controller, model.Hackathon hackathon, UtenteBase utente) {
+    private void setHackathon(Controller controller, model.Hackathon hackathon, Utente utente) {
         titolo.setText(hackathon.getTitolo());
         sede.setText(hackathon.getSede());
         organizzatore.setText(hackathon.getOrganizzatore());
@@ -148,7 +147,7 @@ public class Hackathon {
 
 
 
-    public static void main(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, UtenteBase utente) {
+    public static void main(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, Utente utente) {
         frameHackathon = new JFrame("Hackathon");
         frameHackathon.setContentPane(new Hackathon(controller, hackathon, giudici, utente).hackathonPanel);
         frameHackathon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

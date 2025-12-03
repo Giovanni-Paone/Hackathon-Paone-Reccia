@@ -153,10 +153,10 @@ public class DAO_Invito {
         return inviti;
     }
 
-    public UtenteBase accetta(Utente destinatario, Invito invito) throws SQLException {
+    public Utente accetta(Utente destinatario, Invito invito) throws SQLException {
         DAO_Hackathon daoHackathon = new DAO_Hackathon();
         Hackathon hackathon = daoHackathon.findHackathonCorrente();
-        UtenteBase utente = null;
+        Utente utente = null;
 
         if (invito.getPermesso()) {
             String sql = "UPDATE utente SET ruolo = 0 WHERE username = ?";
