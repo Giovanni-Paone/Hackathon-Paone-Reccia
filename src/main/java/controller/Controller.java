@@ -108,7 +108,7 @@ public class Controller {
             if(utente.getRuolo() <= 0) {
                 Home2.main(this, (Organizzatore) utente);
             } else if(utente.getRuolo() <= 2) {
-                ArrayList<Invito> inviti = this.getInviti((Utente) utente);
+                ArrayList<Invito> inviti = this.getInviti(utente);
                 Home.main(this, (Utente) utente, inviti);
             } else if(utente.getRuolo() == 3) {
                 MembroTeamHome.main(this, (MembroTeam) utente);
@@ -330,9 +330,9 @@ public class Controller {
                 iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
             } else if(hackathon.getDataInizio().before(oggi)) {
                 //chiamata con giudici votanti
-                iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+                iscritti = daoTeam.findByHackathonInBetween();
             } else {
-                iscritti = daoTeam.findByHackathon(hackathon.getTitolo());
+                iscritti = daoTeam.findByHackathonAfterEnd(hackathon.getTitolo());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

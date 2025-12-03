@@ -14,7 +14,7 @@ public class DAO_Voto {
     }
 
     public boolean save(String hackathon, String team, String giudice, int voto) throws SQLException {
-        String sql = "INSERT INTO team_giudice_voto (hackathon, team, giudice, voto) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO voto_team (hackathon, team, giudice, voto) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, hackathon);

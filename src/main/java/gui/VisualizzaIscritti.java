@@ -136,7 +136,8 @@ public class VisualizzaIscritti {
                 JButton buttonRimuoviUser = new JButton("Rimuovi");
 
                 if (utente.getRuolo() != 0 &&
-                        !hackathon.getOrganizzatore().equals(utente.USERNAME)) {
+                        !hackathon.getOrganizzatore().equals(utente.USERNAME)
+                        || hackathon.getDataFine().after(controller.oggi)) {
                     buttonRimuoviUser.setVisible(false);
                 }
 

@@ -144,6 +144,101 @@ public class DAO_Team {
         return teams;
     }
 
+    public ArrayList<Team> findByHackathonInBetween() throws SQLException {
+
+        ArrayList<Team> teams = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            ph.nometeam, ph.username AS partecipante,
+            vt.giudice
+        FROM partecipante_hackathon ph
+        LEFT JOIN voto_team vt
+            ON vt.team = ph.nometeam
+        WHERE vt.hackathon = ph.hackathon
+        ORDER BY ph.nometeam, partecipante, vt.giudice
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                Team team = null;
+
+                while (rs.next()) {
+
+                    String nomeTeam = rs.getString("nometeam");
+                    String partecipante = rs.getString("partecipante");
+                    String giudice = rs.getString("giudice");
+
+                    // Se è un team nuovo, crealo
+                    if (team == null || !team.NOME_TEAM.equals(nomeTeam)) {
+                        team = new Team(nomeTeam);
+                        teams.add(team);
+                    }
+
+                    // Aggiungi partecipante se non c'è
+                    if (!team.partecipanti.contains(partecipante)) {
+                        team.addPartecipante(partecipante);
+                    }
+
+                    // Aggiungi giudice se esiste e non è un duplicato
+                    if (giudice != null && !team.giudiciVotanti.contains(giudice)) {
+                        team.giudiciVotanti.add(giudice);
+                    }
+                }
+            }
+        }
+
+        return teams;
+    }
+
+    public ArrayList<Team> findByHackathonAfterEnd(String hackathon) throws SQLException {
+        ArrayList<Team> teams = new ArrayList<>();
+
+        String sql = """
+        SELECT t.nome_team AS nometeam, t.voto, ph.username AS partecipante
+        FROM team t
+        LEFT JOIN partecipante_hackathon ph 
+            ON ph.nometeam = t.nome_team AND t.nomefile = 'Vuoto'
+        WHERE ph.hackathon = ?
+        ORDER BY t.voto, t.nome_team, ph.username
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, hackathon);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (!rs.next()) {
+                    return teams;
+                }
+
+                String nomeTeam = rs.getString("nometeam");
+                int voto = rs.getInt("voto");
+                String partecipante = rs.getString("partecipante");
+
+                Team team = new Team(nomeTeam, partecipante, voto);
+                teams.add(team);
+
+                while (rs.next()) {
+                    String nextTeam = rs.getString("nometeam");
+                    int nextVoto = rs.getInt("voto");
+                    String nextPartecipante = rs.getString("partecipante");
+
+                    // stesso team
+                    if (team.NOME_TEAM.equals(nextTeam)) {
+                        team.addPartecipante(nextPartecipante);
+                    } else {
+                        team = new Team(nextTeam, nextPartecipante, nextVoto);
+                        teams.add(team);
+                    }
+                }
+            }
+        }
+
+        return teams;
+    }
 
 
     public boolean saveFile(String nomeTeam, String nomeFile, String contenuto) throws SQLException {
