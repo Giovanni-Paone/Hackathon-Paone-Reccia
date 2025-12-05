@@ -26,8 +26,8 @@ public class DAO_Hackathon {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, hackathon.getTitolo());
             stmt.setString(2, hackathon.getSede());
-            stmt.setDate(3, new java.sql.Date(hackathon.getDataInizio().getTime()));
-            stmt.setDate(4, new java.sql.Date(hackathon.getDataFine().getTime()));
+            stmt.setDate(3, java.sql.Date.valueOf(hackathon.getDataInizio()));
+            stmt.setDate(4, java.sql.Date.valueOf(hackathon.getDataFine()));
             stmt.setInt(5, hackathon.getMaxIscritti());
             stmt.setInt(6, hackathon.getMaxTeamSize());
             stmt.setString(7, hackathon.getOrganizzatore());
@@ -52,8 +52,8 @@ public class DAO_Hackathon {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, hackathon.getTitolo());
             stmt.setString(2, hackathon.getSede());
-            stmt.setDate(3, new java.sql.Date(hackathon.getDataInizio().getTime()));
-            stmt.setDate(4, new java.sql.Date(hackathon.getDataFine().getTime()));
+            stmt.setDate(3, java.sql.Date.valueOf(hackathon.getDataInizio()));
+            stmt.setDate(4, java.sql.Date.valueOf(hackathon.getDataFine()));
             stmt.setInt(5, hackathon.getMaxIscritti());
             stmt.setInt(6, hackathon.getMaxTeamSize());
             stmt.setString(7, oldtitolo);
@@ -122,8 +122,8 @@ public class DAO_Hackathon {
                 rs.getString("titolo"),
                 rs.getString("sede"),
                 rs.getString("organizzatore"),
-                rs.getDate("datainizio"),
-                rs.getDate("datafine"),
+                rs.getDate("datainizio").toLocalDate(),
+                rs.getDate("datafine").toLocalDate(),
                 rs.getInt("maxiscritti"),
                 rs.getInt("maxteamsize"),
                 (rs.getInt("nteamiscritti"))-1,

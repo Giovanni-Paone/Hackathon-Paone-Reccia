@@ -43,8 +43,8 @@ public class DAO_Utente {
         Hackathon hackathon = daoHackathon.findHackathonCorrente();
         if (hackathon == null) {return true;}
 
-        Date oggi = Date.valueOf(LocalDate.now());
-        if (hackathon.getDataInizio().before(oggi)) {
+        LocalDate oggi = LocalDate.now();
+        if (hackathon.getDataInizio().isBefore(oggi)) {
 
             String nomeTeam = null;
             sql = "SELECT nometeam FROM partecipante_hackathon WHERE username = ? AND hackathon = ?";

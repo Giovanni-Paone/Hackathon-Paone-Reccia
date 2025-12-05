@@ -8,14 +8,15 @@
  */
 package model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Hackathon {
     private String titolo;
     private String sede;
     private String organizzatore;
-    private Date dataInizio;
-    private Date dataFine;
+    private LocalDate dataInizio;
+    private LocalDate dataFine;
     private int maxIscritti;
     private int maxTeamSize;
     private int nTeamIscritti;
@@ -35,8 +36,8 @@ public class Hackathon {
      * @param maxTeamSize La dimensione massima di un singolo team.
      */
 
-    public Hackathon(String titolo, String sede, String organizzatore, Date dataInizio,
-                     Date fine, int maxIscritti, int maxTeamSize) {
+    public Hackathon(String titolo, String sede, String organizzatore, LocalDate dataInizio,
+                     LocalDate fine, int maxIscritti, int maxTeamSize) {
         this.titolo = titolo;
         this.sede = sede;
         this.organizzatore = organizzatore;
@@ -65,8 +66,8 @@ public class Hackathon {
      * @param aperturaRegistrazioni Lo stato di apertura/chiusura delle registrazioni ({@code true} se aperte).
      */
 
-    public Hackathon(String titolo, String sede, String organizzatore, Date dataInizio,
-                     Date fine, int maxIscritti, int maxTeamSize, int nTeamIscritti, int nPartecipantiIscritti,
+    public Hackathon(String titolo, String sede, String organizzatore, LocalDate dataInizio,
+                     LocalDate fine, int maxIscritti, int maxTeamSize, int nTeamIscritti, int nPartecipantiIscritti,
                      boolean aperturaRegistrazioni) {
         this.titolo = titolo;
         this.sede = sede;
@@ -113,25 +114,25 @@ public class Hackathon {
      * Restituisce la data e ora di inizio dell'Hackathon.
      * @return La data di inizio.
      */
-    public Date getDataInizio() {return dataInizio;}
+    public LocalDate getDataInizio() {return dataInizio;}
 
     /**
      * Modifica la data e ora di inizio dell'Hackathon.
      * @param dataInizio La nuova data di inizio.
      */
-    public void cambiaInizio(Date dataInizio) {this.dataInizio = dataInizio;}
+    public void cambiaInizio(LocalDate dataInizio) {this.dataInizio = dataInizio;}
 
     /**
      * Restituisce la data e ora di fine dell'Hackathon.
      * @return La data di fine.
      */
-    public Date getDataFine() {return dataFine;}
+    public LocalDate getDataFine() {return dataFine;}
 
     /**
      * Modifica la data e ora di fine dell'Hackathon.
      * @param fine La nuova data di fine.
      */
-    public void cambiaFine(Date fine) {this.dataFine = fine;}
+    public void cambiaFine(LocalDate fine) {this.dataFine = fine;}
 
     /**
      * Restituisce il numero massimo di partecipanti ammessi all'Hackathon.

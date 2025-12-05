@@ -21,8 +21,8 @@ public class VisualizzaIscritti {
         JPanel panelTeamContainer = new JPanel();
         panelTeamContainer.setLayout(new BoxLayout(panelTeamContainer, BoxLayout.Y_AXIS));
 
-        boolean primaDataInizio = controller.oggi.before(hackathon.getDataInizio());
-        boolean dopoDataFine = controller.oggi.after(hackathon.getDataFine());
+        boolean primaDataInizio = controller.oggi.isBefore(hackathon.getDataInizio());
+        boolean dopoDataFine = controller.oggi.isAfter(hackathon.getDataFine());
 
         // ============================================================
         //          COSTRUZIONE INTERFACCIA PER OGNI TEAM
@@ -41,7 +41,7 @@ public class VisualizzaIscritti {
             JButton buttonRimuoviTeam = new JButton("Rimuovi");
 
             if (utente.getRuolo() > 0 ||
-                    team.NOME_TEAM.equals("Senza_Team") || hackathon.getDataFine().before(controller.oggi) ||
+                    team.NOME_TEAM.equals("Senza_Team") || hackathon.getDataFine().isBefore(controller.oggi) ||
                     (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME))) {
                 buttonRimuoviTeam.setVisible(false);
             }
@@ -63,7 +63,7 @@ public class VisualizzaIscritti {
 
             if (((utente.getRuolo() > 0 ||
                     (utente.getRuolo() == -1 && !hackathon.getOrganizzatore().equals(utente.USERNAME)))
-                    && hackathon.getDataFine().after(controller.oggi))
+                    && hackathon.getDataFine().isAfter(controller.oggi))
                     || team.NOME_TEAM.equals("Senza_Team")) {
                 buttonFile.setVisible(false);
             }
@@ -137,7 +137,7 @@ public class VisualizzaIscritti {
 
                 if (utente.getRuolo() != 0 &&
                         !hackathon.getOrganizzatore().equals(utente.USERNAME)
-                        || hackathon.getDataFine().after(controller.oggi)) {
+                        || hackathon.getDataFine().isBefore(controller.oggi)) {
                     buttonRimuoviUser.setVisible(false);
                 }
 

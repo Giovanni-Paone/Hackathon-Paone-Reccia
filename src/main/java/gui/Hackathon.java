@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Hackathon {
@@ -91,8 +92,12 @@ public class Hackathon {
         titolo.setText(hackathon.getTitolo());
         sede.setText(hackathon.getSede());
         organizzatore.setText(hackathon.getOrganizzatore());
-        dataInizio.setText(String.valueOf(hackathon.getDataInizio()));
-        dataFine.setText(String.valueOf(hackathon.getDataFine()));
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        dataInizio.setText(hackathon.getDataInizio().format(formatter));
+        dataFine.setText(hackathon.getDataFine().format(formatter));
+
         nTeam.setText(String.valueOf(hackathon.getNTeamIscritti()));
         nMaxTeamSize.setText(String.valueOf(hackathon.getMaxTeamSize()));
         postiRimanenti.setText(String.valueOf(hackathon.getMaxIscritti() - hackathon.getNPartecipantiIscritti()));
@@ -100,7 +105,7 @@ public class Hackathon {
         progressBar1.setMaximum(hackathon.getMaxIscritti());
         progressBar1.setValue(hackathon.getNPartecipantiIscritti());
 
-        if (hackathon.getDataFine().before(controller.oggi)) {
+        if (hackathon.getDataFine().isBefore(controller.oggi)) {
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
             partecipaButton.setVisible(false);

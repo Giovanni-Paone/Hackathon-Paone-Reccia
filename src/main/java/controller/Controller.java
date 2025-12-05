@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class Controller {
 
-    public final java.sql.Date oggi = java.sql.Date.valueOf(LocalDate.now());
+    public final LocalDate oggi = LocalDate.now();
 
     public void eseguiIscrizione(Iscrizione iscrizione) {
         String username = iscrizione.getUsernameText().getText().trim();
@@ -325,10 +325,10 @@ public class Controller {
         try {
         DAO_Team daoTeam = new DAO_Team();
 
-            if(hackathon.getDataFine().before(oggi)) {
+            if(hackathon.getDataFine().isBefore(oggi)) {
                 //chiamata con voti
                 iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
-            } else if(hackathon.getDataInizio().before(oggi)) {
+            } else if(hackathon.getDataInizio().isBefore(oggi)) {
                 //chiamata con giudici votanti
                 iscritti = daoTeam.findByHackathonInBetween();
             } else {
@@ -402,14 +402,14 @@ public class Controller {
     }
 
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
-            Date dataInizio = (Date) creaHackathon.getDataInizioSpinner().getValue();
-            Date dataFine = (Date) creaHackathon.getDataFineSpinner().getValue();
+            LocalDate dataInizio = (LocalDate) creaHackathon.getDataInizioSpinner().getValue();
+            LocalDate dataFine = (LocalDate) creaHackathon.getDataFineSpinner().getValue();
             int limiteIscritti = (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue();
             int limiteComponentiSquadra = (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue();
             String titolo = creaHackathon.getTitoloTextField().getText();
             String sede = creaHackathon.getSedeTextField().getText();
 
-            if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
+            if (dataInizio.isAfter(dataFine) || dataInizio.isBefore(oggi)) {
                 JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
                         "la data iniziale o finale non sono corrette",
                         "Errore",
@@ -560,7 +560,7 @@ public class Controller {
 
     //apre la gui per modificare
     public void modificaHackathon(gui.Hackathon hackathonGUI, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) { //da vedere se funziona
-        if(hackathon.getDataInizio().after(new java.util.Date())) {
+        if(hackathon.getDataInizio().isAfter(oggi)) {
             ModificaHackathon.main(this, organizzatore, hackathon, giudici);
             hackathonGUI.getFrameHackathon().dispose();
         }
@@ -574,15 +574,15 @@ public class Controller {
 
     //modifica l hackathon
     public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
-            Date dataInizio = (Date) modificaHackathon.getDataInizioSpinner().getValue();
-            Date dataFine = (Date) modificaHackathon.getDataFineSpinner().getValue();
+            LocalDate dataInizio = (LocalDate) modificaHackathon.getDataInizioSpinner().getValue();
+            LocalDate dataFine = (LocalDate) modificaHackathon.getDataFineSpinner().getValue();
             int limiteIscritti = (Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue();
             int limiteComponentiSquadra = (Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue();
             String titolo = modificaHackathon.getTitoloTextField().getText();
             String sede = modificaHackathon.getSedeTextField().getText();
 
 
-            if (dataInizio.after(dataFine) || dataInizio.before(new Date())) {
+            if (dataInizio.isAfter(dataFine) || dataInizio.isBefore(oggi)) {
                 JOptionPane.showMessageDialog(modificaHackathon.getModificaHackathonPanel(),
                         "la data iniziale o finale non sono corrette",
                         "Errore",
