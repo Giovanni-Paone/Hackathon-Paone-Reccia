@@ -6,6 +6,7 @@ import model.Organizzatore;
 import model.Utente;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class DAO_Hackathon {
@@ -71,7 +72,7 @@ public class DAO_Hackathon {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapRowToHackathon(rs);
+                    return creaHackathon(rs);
                 }
             }
         }
@@ -85,7 +86,7 @@ public class DAO_Hackathon {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapRowToHackathon(rs);
+                    return creaHackathon(rs);
                 }
             }
         }
@@ -102,7 +103,7 @@ public class DAO_Hackathon {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    hackathons.add(mapRowToHackathon(rs));
+                    hackathons.add(creaHackathon(rs));
                 }
             }
         }
@@ -117,7 +118,7 @@ public class DAO_Hackathon {
         }
     }
 
-    private Hackathon mapRowToHackathon(ResultSet rs) throws SQLException {
+    private Hackathon creaHackathon(ResultSet rs) throws SQLException {
         Hackathon hackathon = new Hackathon(
                 rs.getString("titolo"),
                 rs.getString("sede"),
@@ -130,6 +131,23 @@ public class DAO_Hackathon {
                 rs.getInt("utentiIscritti"),
                 rs.getBoolean("aperturaregistrazioni")
         );
+
+        if(hackathon.getAperturaRegistrazioni() && hackathon.getDataInizio().isAfter(LocalDate.now())) {
+            String sql = "UPDATE Hackathon SET aperturaRegistrazioni = FALSE WHERE nome = ?;";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, hackathon.getTitolo());
+                stmt.executeUpdate();
+            }
+        } else if (rs.getBoolean("controllo") && hackathon.getDataFine().isBefore(LocalDate.now())) {
+            String sql = "UPDATE Hackathon SET controllo = FALSE WHERE nome = ?";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, hackathon.getTitolo());
+                stmt.executeUpdate();
+            }
+        }
+
         return hackathon;
     }
 
