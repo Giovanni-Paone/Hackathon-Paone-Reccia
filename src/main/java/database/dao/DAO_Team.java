@@ -107,7 +107,7 @@ public class DAO_Team {
                 String username = rs.getString("username");
                 boolean controllo;
 
-                if (nomeTeam.isBlank()) {
+                if (nomeTeam == null || nomeTeam.isBlank()) {
                     nomeTeam = "Senza_Team";
                     controllo = false;
                 } else {
@@ -149,13 +149,11 @@ public class DAO_Team {
         ArrayList<Team> teams = new ArrayList<>();
 
         String sql = """
-        SELECT 
-            ph.nometeam, ph.username AS partecipante,
-            vt.giudice
+        SELECT ph.nometeam, ph.username AS partecipante, vt.giudice
         FROM partecipante_hackathon ph
         LEFT JOIN voto_team vt
-            ON vt.team = ph.nometeam
-        WHERE vt.hackathon = ph.hackathon
+          ON vt.team = ph.nometeam
+         AND vt.hackathon = ph.hackathon
         ORDER BY ph.nometeam, partecipante, vt.giudice
         """;
 

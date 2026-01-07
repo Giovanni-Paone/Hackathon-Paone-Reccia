@@ -133,14 +133,14 @@ public class DAO_Hackathon {
         );
 
         if(hackathon.getAperturaRegistrazioni() && hackathon.getDataInizio().isBefore(LocalDate.now())) {
-            String sql = "UPDATE Hackathon SET aperturaRegistrazioni = FALSE WHERE nome = ?;";
+            String sql = "UPDATE Hackathon SET aperturaRegistrazioni = FALSE WHERE titolo = ?;";
 
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, hackathon.getTitolo());
                 stmt.executeUpdate();
             }
         } else if (rs.getBoolean("controllo") && hackathon.getDataFine().isBefore(LocalDate.now())) {
-            String sql = "UPDATE Hackathon SET controllo = FALSE WHERE nome = ?";
+            String sql = "UPDATE Hackathon SET controllo = FALSE WHERE titolo = ?";
 
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, hackathon.getTitolo());
