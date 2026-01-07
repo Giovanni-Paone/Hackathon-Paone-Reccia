@@ -195,12 +195,15 @@ public class DAO_Team {
         ArrayList<Team> teams = new ArrayList<>();
 
         String sql = """
-        SELECT t.nome_team AS nometeam, t.voto, ph.username AS partecipante
+        SELECT t.nome AS nometeam, t.voto, ph.username AS partecipante
         FROM team t
         LEFT JOIN partecipante_hackathon ph 
-            ON ph.nometeam = t.nome_team AND t.nomefile = 'Vuoto'
+            ON ph.nometeam = t.nome AND t.nomefile = 'Vuoto'
         WHERE ph.hackathon = ?
-        ORDER BY t.voto, t.nome_team, ph.username
+        ORDER BY 
+            t.voto DESC,
+            t.nome ASC,
+            ph.username ASC
         """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -250,7 +253,7 @@ public class DAO_Team {
         }
 
         // Creiamo sempre un nuovo record nel team con hackathon, nomeTeam e file
-        String sqlInsert = "INSERT INTO team(hackathon, nome, progressi) VALUES (?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO team(hackathon, nome, progressi, nomefile) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmtInsert = connection.prepareStatement(sqlInsert)) {
             stmtInsert.setString(1, hackathon.getTitolo());

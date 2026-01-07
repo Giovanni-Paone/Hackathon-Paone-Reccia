@@ -328,12 +328,12 @@ public class Controller {
 
             if(hackathon.getDataFine().isBefore(oggi)) {
                 //chiamata con voti
-                iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
+                iscritti = daoTeam.findByHackathonAfterEnd(hackathon.getTitolo());;
             } else if(hackathon.getDataInizio().isBefore(oggi)) {
                 //chiamata con giudici votanti
                 iscritti = daoTeam.findByHackathonInBetween();
             } else {
-                iscritti = daoTeam.findByHackathonAfterEnd(hackathon.getTitolo());
+                iscritti = daoTeam.findByHackathonBeforeStart(hackathon.getTitolo());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
