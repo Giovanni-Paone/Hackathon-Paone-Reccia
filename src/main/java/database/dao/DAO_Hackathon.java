@@ -132,7 +132,7 @@ public class DAO_Hackathon {
                 rs.getBoolean("aperturaregistrazioni")
         );
 
-        if(hackathon.getAperturaRegistrazioni() && hackathon.getDataInizio().isAfter(LocalDate.now())) {
+        if(hackathon.getAperturaRegistrazioni() && hackathon.getDataInizio().isBefore(LocalDate.now())) {
             String sql = "UPDATE Hackathon SET aperturaRegistrazioni = FALSE WHERE nome = ?;";
 
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {

@@ -163,12 +163,13 @@ public class Controller {
         this.aggiornaInviti(home, utente);
     }
 
-    public boolean accettaInvito(Home home,Utente utente, Invito invito) {
+    public void accettaInvito(Home home,Utente utente, Invito invito) {
         if(utente.getRuolo() == 29) {
             JOptionPane.showMessageDialog(home.getHomePanel(),
                     "Sei stato rimosso dall'hackathon",
                     "Negato l'accesso",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         Utente NewUtente;
@@ -178,7 +179,7 @@ public class Controller {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if (NewUtente == null) {return false;}
+        if (NewUtente == null) {return;}
         else {home.getFrameHome().dispose();}
 
         if(NewUtente.getRuolo() == 0){
@@ -187,7 +188,7 @@ public class Controller {
             MembroTeamHome.main(this, (MembroTeam) NewUtente);
         }
 
-        return true;
+        return;
     }
 
     public void guardaHackathon(Home2 home, Utente utente) {
