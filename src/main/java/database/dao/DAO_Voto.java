@@ -29,7 +29,4 @@ public class DAO_Voto {
         }
     }
 
-    public void getVoti(ArrayList<Team> teams) throws SQLException {return;}
-
-    public void getGiudiciVotanti(ArrayList<Team> teams) {return;}
 }

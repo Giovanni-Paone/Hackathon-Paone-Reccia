@@ -13,12 +13,12 @@ import java.util.ArrayList;
 public class VisualizzaFile {
     private static JFrame frameVisualizzaFile;
     private JPanel mainPanel;
-    private JButton button1;
-    private JButton button2;
+    private JButton destraButton;
+    private JButton sinistraButton;
 
-    public VisualizzaFile(Controller controller, ArrayList<String> file, int cnt) {
+    public VisualizzaFile(Controller controller, ArrayList<String> files, int cnt) {
 
-        JTextArea textArea = new JTextArea(file.get(cnt));
+        JTextArea textArea = new JTextArea(files.get(cnt));
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
@@ -28,24 +28,30 @@ public class VisualizzaFile {
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Pulsante indietro
-        button2.addMouseListener(new MouseAdapter() {
+        if (cnt == 0) {
+            sinistraButton.setVisible(false);
+        }
+
+        if (files.size() == cnt) {
+            destraButton.setVisible(false);
+        }
+
+        sinistraButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (cnt > 0) {
                     VisualizzaFile.frameVisualizzaFile.dispose();
-                    VisualizzaFile.main(controller, file, cnt - 1);
+                    VisualizzaFile.main(controller, files, cnt - 1);
                 }
             }
         });
 
-        // Pulsante avanti
-        button1.addActionListener(new ActionListener() {
+        destraButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (cnt < file.size() - 1) {
+                if (cnt < files.size() - 1) {
                     VisualizzaFile.frameVisualizzaFile.dispose();
-                    VisualizzaFile.main(controller, file, cnt + 1);
+                    VisualizzaFile.main(controller, files, cnt + 1);
                 }
             }
         });

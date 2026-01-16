@@ -351,6 +351,27 @@ public class Controller {
         }
     }
 
+    public void mostraProblema(Hackathon hackathon) {
+        ArrayList<String> file =  new ArrayList<>();
+        try {
+            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            file.add(daoHackathon.getProblema(hackathon.getTitolo()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        VisualizzaFile.main(this, file, 0);
+    }
+
+    public void salvaProblema(gui.Hackathon hackathonGUI, Hackathon hackathon, String problema) {
+        try {
+            DAO_Hackathon daoHackathon = new DAO_Hackathon();
+            daoHackathon.salvaProblema(hackathon.getTitolo(), problema);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void rimuoviTeam(Team team, Hackathon hackathon) {
         for(String u : team.partecipanti)
             this.squalifica(u, hackathon);

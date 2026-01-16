@@ -6,12 +6,20 @@ import model.Utente;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Hackathon {
     private static JFrame frameHackathon;
@@ -40,6 +48,9 @@ public class Hackathon {
     private JButton effettuaCambiamentiButton;
     private JButton partecipaButton;
     private JPanel giudiciPanel;
+    private JLabel problemaLabel;
+    private JPanel filePanel;
+    private JButton mostraProblemaButton;
 
     public JFrame getFrameHackathon() {return frameHackathon;}
     public JPanel getHackathonPanel() {return hackathonPanel;}
@@ -86,6 +97,83 @@ public class Hackathon {
                 controller.partecipa(Hackathon.this, (Utente) utente, hackathon);
             }
         });
+
+        filePanel.setDropTarget(new DropTarget() {
+            @Override
+            public synchronized void drop(DropTargetDropEvent evt) {
+                try {
+                    evt.acceptDrop(DnDConstants.ACTION_COPY);
+
+                    // accetto solo file dal filesystem
+                    if (!evt.getTransferable()
+                            .isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                        JOptionPane.showMessageDialog(filePanel,
+                                "Puoi trascinare solo file",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE);
+                        evt.dropComplete(false);
+                        return;
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    java.util.List<File> files = (List<File>) evt.getTransferable()
+                            .getTransferData(DataFlavor.javaFileListFlavor);
+
+                    // un solo file
+                    if (files.size() != 1) {
+                        JOptionPane.showMessageDialog(filePanel,
+                                "Carica un solo file",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE);
+                        evt.dropComplete(false);
+                        return;
+                    }
+
+                    File file = files.get(0);
+
+                    // solo .txt
+                    if (!file.getName().toLowerCase().endsWith(".txt")) {
+                        JOptionPane.showMessageDialog(filePanel,
+                                "Il file deve essere .txt",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE);
+                        evt.dropComplete(false);
+                        return;
+                    }
+
+                    // leggo contenuto
+                    String contenuto = Files.readString(
+                            file.toPath(),
+                            StandardCharsets.UTF_8
+                    );
+
+                    // unica chiamata richiesta
+                    controller.salvaProblema(Hackathon.this, hackathon, contenuto);
+
+                    JOptionPane.showMessageDialog(filePanel,
+                            "Problema caricato con successo");
+
+                    evt.dropComplete(true);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(filePanel,
+                            "Errore durante il caricamento del file",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                    evt.dropComplete(false);
+                }
+            }
+        });
+
+
+        mostraProblemaButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                controller.mostraProblema(hackathon);
+            }
+        });
     }
 
     private void setHackathon(Controller controller, model.Hackathon hackathon, Utente utente) {
@@ -109,13 +197,32 @@ public class Hackathon {
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
             partecipaButton.setVisible(false);
-            partecipantiButton.setVisible(false);
         }
         else {
-            if (!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
-                    hackathon.getAperturaRegistrazioni()) {
+            if(hackathon.getDataInizio().isBefore(controller.oggi)) {
+                problemaLabel.setVisible(false);
+                filePanel.setVisible(false);
+            } else {
+                mostraProblemaButton.setVisible(false);
+            }
+
+            if (utente.USERNAME.equals(hackathon.getOrganizzatore())) {
+                problemaLabel.setVisible(true);
+                filePanel.setVisible(true);
+                mostraProblemaButton.setVisible(true);
+            } else {
                 apriIscrizioniButton.setVisible(false);
                 effettuaCambiamentiButton.setVisible(false);
+                partecipantiButton.setVisible(false);
+                problemaLabel.setVisible(false);
+                filePanel.setVisible(false);
+            }
+            if (hackathon.getAperturaRegistrazioni()) {
+                apriIscrizioniButton.setVisible(false);
+                effettuaCambiamentiButton.setVisible(false);
+                partecipantiButton.setVisible(false);
+                problemaLabel.setVisible(false);
+                filePanel.setVisible(false);
             }
 
             if (!hackathon.getAperturaRegistrazioni()) {

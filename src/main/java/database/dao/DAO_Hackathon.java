@@ -205,6 +205,31 @@ public class DAO_Hackathon {
 
     }
 
+    public void salvaProblema(String hackathon, String problema) throws SQLException {
+            String sql = "UPDATE hackathon SET problema = ? WHERE titolo = ?";
 
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, problema);
+                stmt.setString(2, hackathon);
+
+                stmt.executeUpdate();
+            }
+    }
+
+    public String getProblema(String hackathon) throws SQLException {
+
+        String sql = "SELECT problema FROM hackathon WHERE titolo = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, hackathon);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("problema");
+                }
+            }
+        }
+        return null;
+    }
 
 }
