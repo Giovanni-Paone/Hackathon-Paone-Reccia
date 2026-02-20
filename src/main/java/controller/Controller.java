@@ -10,12 +10,16 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Controller {
 
     public final LocalDate oggi = LocalDate.now();
 
+    /**
+     * Gestisce la registrazione di un nuovo utente.
+     * Verifica la validità di username e password e salva i dati tramite DAO_Utente.
+     * @param iscrizione L'interfaccia grafica del form di iscrizione.
+     */
     public void eseguiIscrizione(Iscrizione iscrizione) {
         String username = iscrizione.getUsernameText().getText().trim();
         String password = new String(iscrizione.getPasswordField1().getPassword());
@@ -72,6 +76,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Gestisce l'autenticazione degli utenti.
+     * In base al ruolo dell'utente autenticato (Organizzatore, Utente semplice, Membro Team),
+     * reindirizza alla home page corretta.
+     * @param login L'interfaccia grafica del form di login.
+     */
     public void eseguiLogin(Login login) {
         String username = login.getUsernameTextField().getText().trim();
         String password = new String(login.getPasswordField1().getPassword());
@@ -121,6 +131,11 @@ public class Controller {
         login.getFrameLogin().dispose();
     }
 
+    /**
+     * Recupera tutti gli inviti ricevuti da un determinato utente.
+     * @param utente L'utente di cui recuperare gli inviti.
+     * @return Una lista di oggetti Invito.
+     */
     public ArrayList<Invito> getInviti(Utente utente) {
         ArrayList<Invito> inviti = new ArrayList<>();
 
@@ -134,6 +149,12 @@ public class Controller {
         return inviti;
     }
 
+    /**
+     * Recupera gli inviti filtrandoli per il mittente.
+     * @param utente L'utente destinatario.
+     * @param mittente Il nome del mittente da cercare.
+     * @return Una lista di inviti filtrata.
+     */
     public ArrayList<Invito> getInviti(Utente utente, String mittente) {
         ArrayList<Invito> inviti = new ArrayList<>();
 
@@ -147,12 +168,23 @@ public class Controller {
         return inviti;
     }
 
+    /**
+     * Aggiorna la visualizzazione degli inviti nel pannello Home.
+     * @param home L'interfaccia home utente.
+     * @param utente L'utente corrente.
+     */
     public void aggiornaInviti(Home home, Utente utente) {
         String mittente = home.getCercaTextField().getText().trim();
         ArrayList<Invito> inviti = this.getInviti(utente, mittente);
         home.aggiornaInvitiPanel(this, utente, inviti);
     }
 
+    /**
+     * Gestisce il rifiuto di un invito eliminandolo dal database.
+     * @param home L'interfaccia home utente.
+     * @param utente L'utente che rifiuta.
+     * @param invito L'invito da eliminare.
+     */
     public void rifiutaInvito(Home home, Utente utente, Invito invito) {
         try {
             DAO_Invito daoInvito = new DAO_Invito();
@@ -163,6 +195,13 @@ public class Controller {
         this.aggiornaInviti(home, utente);
     }
 
+    /**
+     * Gestisce l'accettazione di un invito.
+     * Aggiorna il ruolo dell'utente nel database e aggiorna la GUI.
+     * @param home L'interfaccia home utente.
+     * @param utente L'utente che accetta.
+     * @param invito L'invito accettato.
+     */
     public void accettaInvito(Home home,Utente utente, Invito invito) {
         if(utente.getRuolo() == 29) {
             JOptionPane.showMessageDialog(home.getHomePanel(),
@@ -191,6 +230,12 @@ public class Controller {
         return;
     }
 
+    /**
+     * Apre la schermata dell'Hackathon corrente per un Organizzatore.
+     * Se non esiste un hackathon, propone di crearne uno.
+     * @param home Interfaccia home organizzatore.
+     * @param utente L'organizzatore corrente.
+     */
     public void guardaHackathon(Home2 home, Utente utente) {
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
@@ -221,6 +266,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Apre la schermata dell'Hackathon corrente per un Utente semplice.
+     * @param home Interfaccia home utente.
+     * @param utente L'utente corrente.
+     */
     public void guardaHackathon(Home home, Utente utente) {
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
@@ -248,6 +298,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Apre la schermata dell'Hackathon corrente per un Membro del Team.
+     * @param home Interfaccia home membro team.
+     * @param utente Il membro team corrente.
+     */
     public void guardaHackathon(MembroTeamHome home, Utente utente) { //arronzato, era di organizzatore
         Hackathon hackathon;
         ArrayList<Organizzatore> giudici;
@@ -263,6 +318,11 @@ public class Controller {
 
     }
 
+    /**
+     * Apre la schermata di un Hackathon specifico.
+     * @param utente Utente visualizzatore.
+     * @param hackathon L'oggetto Hackathon da mostrare.
+     */
     public void guardaHackathon(Utente utente, Hackathon hackathon) {
         ArrayList<Organizzatore> giudici;
         try {
@@ -275,6 +335,13 @@ public class Controller {
         gui.Hackathon.main(this, hackathon, giudici, utente);
     } //per visualizzaHackathon
 
+    /**
+     * Permette all'organizzatore di aprire ufficialmente le iscrizioni a un Hackathon.
+     * @param hackathonGUI GUI dell'hackathon.
+     * @param hackathon Modello dell'hackathon.
+     * @param giudici Lista dei giudici associati.
+     * @param organizzatore L'organizzatore che esegue l'azione.
+     */
     public void apriRegistrazioni(gui.Hackathon hackathonGUI, Hackathon hackathon,
                                   ArrayList<Organizzatore> giudici, Organizzatore organizzatore) {
 
@@ -295,6 +362,13 @@ public class Controller {
         }
     }
 
+    /**
+     * Filtra e visualizza gli Hackathon passati.
+     * @param visualizzaHackathon GUI di visualizzazione.
+     * @param hackathon Nome/titolo da cercare.
+     * @param organizzatore Nome organizzatore da cercare.
+     * @param utente Utente corrente.
+     */
     public void precedentiHackathon(VisualizzaHackathon visualizzaHackathon, String hackathon, String organizzatore, Utente utente) {
         ArrayList<model.Hackathon> hackathons = new ArrayList<>();
         try {
@@ -308,6 +382,11 @@ public class Controller {
         VisualizzaHackathon.main(this, utente, hackathons);
     }
 
+    /**
+     * Mostra l'elenco dei team iscritti a un Hackathon prima del suo inizio.
+     * @param hackathon L'hackathon di riferimento.
+     * @param utente L'utente visualizzatore.
+     */
     public void visualizzaIscritti(Hackathon hackathon, Utente utente) {
         ArrayList<Team> iscritti;
 
@@ -320,6 +399,12 @@ public class Controller {
         VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
+    /**
+     * Mostra l'elenco dei team iscritti, gestendo stati diversi (prima dell'inizio, in corso, finito).
+     * Se l'hackathon è finito, mostra anche i voti.
+     * @param hackathon L'hackathon di riferimento.
+     * @param utente L'utente visualizzatore.
+     */
     public void visualizzaTeam(Hackathon hackathon, Utente utente) {
         ArrayList<Team> iscritti;
 
@@ -342,6 +427,11 @@ public class Controller {
         VisualizzaIscritti.main(this, hackathon, iscritti, utente);
     }
 
+    /**
+     * Squalifica un utente da un Hackathon.
+     * @param utente Username dell'utente da squalificare.
+     * @param hackathon Hackathon da cui rimuoverlo.
+     */
     public void squalifica(String utente, Hackathon hackathon) {
         try {
             DAO_Hackathon daoHackathon =  new DAO_Hackathon();
@@ -351,6 +441,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Recupera e visualizza il file relativo al problema/traccia dell'Hackathon.
+     * @param hackathon L'hackathon corrente.
+     */
     public void mostraProblema(Hackathon hackathon) {
         ArrayList<String> file =  new ArrayList<>();
         try {
@@ -363,6 +457,12 @@ public class Controller {
         VisualizzaFile.main(this, file, 0);
     }
 
+    /**
+     * Salva la descrizione del problema/traccia per un Hackathon.
+     * @param hackathonGUI GUI dell'hackathon.
+     * @param hackathon L'oggetto hackathon.
+     * @param problema Testo della traccia.
+     */
     public void salvaProblema(gui.Hackathon hackathonGUI, Hackathon hackathon, String problema) {
         try {
             DAO_Hackathon daoHackathon = new DAO_Hackathon();
@@ -372,6 +472,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Rimuove un intero team e squalifica tutti i suoi partecipanti.
+     * @param team Team da rimuovere.
+     * @param hackathon Hackathon di riferimento.
+     */
     public void rimuoviTeam(Team team, Hackathon hackathon) {
         for(String u : team.partecipanti)
             this.squalifica(u, hackathon);
@@ -384,6 +489,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Visualizza i file consegnati da un team specifico.
+     * @param team Nome del team.
+     * @param hackathon Hackathon di riferimento.
+     */
     public void visualizzaFile(String team, Hackathon hackathon) {
         if(hackathon == null){
             try {
@@ -405,6 +515,14 @@ public class Controller {
         VisualizzaFile.main(this, files, 0);
     }
 
+    /**
+     * Salva un nuovo file di progetto per un team.
+     * @param membroTeamHome GUI del membro team.
+     * @param team Oggetto team.
+     * @param nomeFile Nome del file da salvare.
+     * @param contenuto Contenuto del file.
+     * @return true se il salvataggio ha successo, false se il nome file esiste già.
+     */
     public boolean saveFile(MembroTeamHome membroTeamHome, Team team, String nomeFile, String contenuto) {
         boolean controllo;
         try {
@@ -423,6 +541,11 @@ public class Controller {
         } else return true;
     }
 
+    /**
+     * Gestisce la creazione di un nuovo Hackathon verificando la validità delle date e dei limiti numerici.
+     * @param creaHackathon Form GUI di creazione.
+     * @param organizzatore Organizzatore che crea l'evento.
+     */
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
             LocalDate dataInizio = (LocalDate) creaHackathon.getDataInizioSpinner().getValue();
             LocalDate dataFine = (LocalDate) creaHackathon.getDataFineSpinner().getValue();
@@ -494,6 +617,13 @@ public class Controller {
         }
     }
 
+    /**
+     * Gestisce la partecipazione di un utente a un hackathon, convertendolo in partecipante.
+     * @param hackathonGUI GUI dell'hackathon.
+     * @param utente Utente che vuole iscriversi.
+     * @param hackathon Hackathon a cui iscriversi.
+     * @return L'oggetto Utente aggiornato.
+     */
     public Utente partecipa(gui.Hackathon hackathonGUI, Utente utente, Hackathon hackathon) {
         if(utente.getRuolo() == 29) {
             JOptionPane.showMessageDialog(hackathonGUI.getHackathonPanel(),
@@ -534,6 +664,13 @@ public class Controller {
         } else return  null;
     };
 
+    /**
+     * Gestisce la creazione di un team da parte di un partecipante.
+     * @param creaTeam Form GUI di creazione team.
+     * @param utente Utente capo-team.
+     * @param home Interfaccia home.
+     * @return L'oggetto MembroTeam creato.
+     */
     public MembroTeam creaTeam(CreaTeam creaTeam, Utente utente, Home home) {
         String nomeTeam = creaTeam.getNomeTeam().getText();
         if (nomeTeam.isEmpty()) {
@@ -580,7 +717,14 @@ public class Controller {
         } else return null;
     }
 
-    //apre la gui per modificare
+    /**
+     * Apre l'interfaccia grafica per la modifica dei dati di un Hackathon.
+     * Il metodo verifica che l'evento non sia ancora iniziato prima di procedere.
+     * @param hackathonGUI  Il frame della visualizzazione hackathon corrente.
+     * @param organizzatore L'utente organizzatore che richiede la modifica.
+     * @param hackathon     L'oggetto hackathon da modificare.
+     * @param giudici       La lista dei giudici attualmente assegnati.
+     */
     public void modificaHackathon(gui.Hackathon hackathonGUI, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) { //da vedere se funziona
         if(hackathon.getDataInizio().isAfter(oggi)) {
             ModificaHackathon.main(this, organizzatore, hackathon, giudici);
@@ -594,7 +738,14 @@ public class Controller {
         }
     }
 
-    //modifica l hackathon
+    /**
+     * Valida i dati inseriti nel form e aggiorna i dati dell'Hackathon nel database.
+     * Gestisce la chiusura della finestra di modifica in caso di successo.
+     * @param modificaHackathon Il frame del form di modifica.
+     * @param organizzatore     L'organizzatore che conferma le modifiche.
+     * @param hackathon         L'oggetto hackathon con i nuovi dati da salvare.
+     * @param giudici           La lista aggiornata dei giudici.
+     */
     public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
             LocalDate dataInizio = (LocalDate) modificaHackathon.getDataInizioSpinner().getValue();
             LocalDate dataFine = (LocalDate) modificaHackathon.getDataFineSpinner().getValue();
@@ -668,6 +819,13 @@ public class Controller {
         }
     }
 
+    /**
+     * Cerca gli utenti nel database filtrandoli per una chiave di ricerca.
+     * Versione specifica per le funzionalità lato Utente.
+     * @param cercaUtenti L'interfaccia dei risultati di ricerca.
+     * @param utente      L'utente che esegue la ricerca.
+     * @param ricercato   La stringa (username) da cercare.
+     */
     public void cercaUtentiU(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         ArrayList<Utente> utenti;
         try {
@@ -680,6 +838,13 @@ public class Controller {
         CercaUtenti.main(this, utente, utenti);
     }
 
+    /**
+     * Cerca gli utenti nel database con privilegi di Organizzatore.
+     * Permette una visualizzazione completa dei profili trovati.
+     * @param cercaUtenti L'interfaccia dei risultati di ricerca.
+     * @param utente      L'organizzatore che esegue la ricerca.
+     * @param ricercato   La stringa (username) da cercare.
+     */
     public void cercaUtentiO(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         ArrayList<Utente> utenti;
         try {
@@ -692,6 +857,12 @@ public class Controller {
         CercaUtenti.main(this, utente, utenti);
     }
 
+    /**
+     * Rimuove un utente dal sistema e aggiorna la visualizzazione della ricerca.
+     * @param cercaUtenti L'interfaccia corrente per rinfrescare la lista.
+     * @param utente      L'utente da eliminare.
+     * @param ricercato   La chiave di ricerca per ripristinare il filtro precedente.
+     */
     public void cancellaUtente(CercaUtenti cercaUtenti, Utente utente, String ricercato) {
         try {
             DAO_Utente daoUtente = new DAO_Utente();
@@ -702,6 +873,12 @@ public class Controller {
         this.cercaUtentiO(cercaUtenti, utente, ricercato);
     }
 
+    /**
+     * Invia un invito per conto di un Membro del Team a un potenziale partecipante.
+     * @param cercaUtenti  La GUI da cui è partito l'invito.
+     * @param mittente     Il membro del team che effettua la chiamata.
+     * @param destinatario L'utente che riceverà l'invito nel proprio pannello.
+     */
     public void invitaMT(CercaUtenti cercaUtenti, MembroTeam mittente, Utente destinatario) {
         boolean controllo = false;
 
@@ -721,6 +898,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Invia un invito ufficiale da parte di un Organizzatore per reclutare nuovi gestori.
+     * @param cercaUtenti  La GUI da cui è partito l'invito.
+     * @param mittente     L'organizzatore che invia la richiesta.
+     * @param destinatario L'utente invitato.
+     */
     public void invitaO(CercaUtenti cercaUtenti, Organizzatore mittente, Utente destinatario) {
         boolean controllo = false;
 
@@ -740,6 +923,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Mostra una finestra di dialogo per inserire un voto da 1 a 10 per un team specifico.
+     * @param team Team da votare.
+     * @param hackathon Hackathon di riferimento.
+     * @param utente Giudice che effettua la votazione.
+     */
     public void aggiungiVoto(Team team, Hackathon hackathon, Utente utente) {
         JSpinner spinner = new JSpinner(
                 new SpinnerNumberModel(1, 1, 10, 1)

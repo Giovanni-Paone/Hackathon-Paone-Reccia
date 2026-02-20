@@ -9,20 +9,37 @@ import model.Utente;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Data Access Object (DAO) per la gestione della persistenza dei Team.
+ * Si occupa di interfacciare il sistema con le tabelle del database relative ai team,
+ * ai partecipanti e ai file caricati durante gli hackathon.
+ */
 public class DAO_Team {
 
     private final Connection connection;
 
+    /**
+     * Inizializza il DAO ottenendo la connessione attiva al database.
+     * @throws SQLException Se si verifica un errore durante il recupero della connessione.
+     */
     public DAO_Team() throws SQLException {
         this.connection = ConnessioneDatabase.getInstance().connection;
     }
 
+    /**
+     * Registra un nuovo team nel database e associa l'utente creatore ad esso.
+     * Aggiorna inoltre il ruolo dell'utente per riflettere la creazione del team.
+     * @param nomeTeam Il nome del team da creare.
+     * @param utente L'utente che crea il team (diventa membro).
+     * @return true se il salvataggio avviene con successo, false se il team esiste già (violazione unique).
+     * @throws SQLException Se si verificano errori nell'esecuzione delle query SQL.
+     */
     public boolean save(String nomeTeam, Utente utente) throws SQLException {
         DAO_Hackathon daoHackathon = new DAO_Hackathon();
         Hackathon hackathon = daoHackathon.findHackathonCorrente();
 
         try {
-
+            // Inserimento del team nella tabella dedicata
             String sql = "INSERT INTO team (nome, hackathon) VALUES (?, ?)";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, nomeTeam);
@@ -30,6 +47,7 @@ public class DAO_Team {
                 stmt.executeUpdate();
             }
 
+            // Associazione dell'utente al team appena creato
             sql = "UPDATE partecipante_hackathon SET nometeam = ? WHERE hackathon = ? AND username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, nomeTeam);
@@ -37,7 +55,7 @@ public class DAO_Team {
                 stmt.setString(3, utente.USERNAME);
                 stmt.executeUpdate();
             }
-
+            // Aggiornamento ruolo utente
             sql = "UPDATE utente SET ruolo = 3 WHERE username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, utente.USERNAME);
@@ -53,7 +71,13 @@ public class DAO_Team {
         }
     }
 
-
+    /**
+     * Rimuove un team dal database per un determinato hackathon.
+     * @param nomeTeam Nome del team da eliminare.
+     * @param hackathon Oggetto Hackathon di riferimento.
+     * @return true se l'eliminazione ha avuto successo, false altrimenti.
+     * @throws SQLException Se si verifica un errore SQL.
+     */
     public boolean delete(String nomeTeam, Hackathon hackathon) throws SQLException {
         String sql = "DELETE FROM TEAM WHERE Nome = ? AND Hackathon = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -85,6 +109,13 @@ public class DAO_Team {
 
      */
 
+    /**
+     * Recupera la lista dei team e dei relativi partecipanti prima dell'inizio dell'hackathon.
+     * Gestisce anche gli utenti "Senza Team" raggruppandoli sotto un unico identificativo.
+     * @param hackathon Il titolo dell'hackathon.
+     * @return Una lista di oggetti Team popolati con i rispettivi partecipanti.
+     * @throws SQLException Se si verifica un errore SQL.
+     */
     public ArrayList<Team> findByHackathonBeforeStart(String hackathon) throws SQLException {
         ArrayList<Team> teams = new ArrayList<>();
 
@@ -144,6 +175,12 @@ public class DAO_Team {
         return teams;
     }
 
+    /**
+     * Recupera i team durante lo svolgimento dell'hackathon, includendo i partecipanti
+     * e la lista dei giudici che hanno già espresso un voto per quel team.
+     * @return Una lista di oggetti Team con partecipanti e giudici votanti.
+     * @throws SQLException Se si verifica un errore SQL.
+     */
     public ArrayList<Team> findByHackathonInBetween() throws SQLException {
 
         ArrayList<Team> teams = new ArrayList<>();
@@ -191,6 +228,13 @@ public class DAO_Team {
         return teams;
     }
 
+    /**
+     * Recupera i team dopo la fine dell'hackathon, ordinandoli per voto decrescente.
+     * Include solo i team che non hanno caricato file (contrassegnati come 'Vuoto').
+     * @param hackathon Il titolo dell'hackathon terminato.
+     * @return Una lista di Team ordinata per classifica (voto).
+     * @throws SQLException Se si verifica un errore SQL.
+     */
     public ArrayList<Team> findByHackathonAfterEnd(String hackathon) throws SQLException {
         ArrayList<Team> teams = new ArrayList<>();
 
@@ -241,7 +285,15 @@ public class DAO_Team {
         return teams;
     }
 
-
+    /**
+     * Salva i progressi di un team caricando un file (o il relativo contenuto testuale).
+     * Crea un nuovo record nella tabella team per tracciare la cronologia o i diversi file.
+     * @param nomeTeam Nome del team che effettua il caricamento.
+     * @param nomeFile Nome del file da salvare.
+     * @param contenuto Il contenuto o i progressi relativi al file.
+     * @return true se il salvataggio è riuscito, false se esiste già un record identico.
+     * @throws SQLException Se si verifica un errore SQL.
+     */
     public boolean saveFile(String nomeTeam, String nomeFile, String contenuto) throws SQLException {
         database.dao.DAO_Hackathon daoHackathon = new DAO_Hackathon();
         Hackathon hackathon;
@@ -270,6 +322,13 @@ public class DAO_Team {
         }
     }
 
+    /**
+     * Recupera tutti i file e i progressi associati a un team specifico per un hackathon.
+     * Esclude i record che non contengono file reali (nomefile = 'Vuoto').
+     * @param team Il nome del team.
+     * @param hackathon Il titolo dell'hackathon.
+     * @return Un'ArrayList di stringhe dove gli elementi sono alternati: [titoloFile1, contenuto1, titoloFile2, contenuto2, ...].
+     */
     public ArrayList<String> getFile(String team, String hackathon) {
         ArrayList<String> files = new ArrayList<>();
 

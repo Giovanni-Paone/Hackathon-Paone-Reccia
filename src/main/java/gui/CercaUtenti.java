@@ -11,6 +11,13 @@ import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Rappresenta la schermata di ricerca utenti.
+ * Questa interfaccia permette di cercare utenti per nickname e visualizza i risultati
+ * in una lista dinamica. I pulsanti d'azione visualizzati accanto a ciascun utente
+ * (es. Invita, Rimuovi) variano in base al ruolo dell'utente loggato
+ * (es. Organizzatore o MembroTeam) e al contesto dell'Hackathon.
+*/
 public class CercaUtenti {
     private static JFrame frameCercaUtenti;
     private JPanel cercaUtentiPanel;
@@ -19,9 +26,20 @@ public class CercaUtenti {
     private JButton cercaButton;
     private JPanel listaPanel;
 
+
     public JFrame getFrameCercaUtenti() {return frameCercaUtenti;}
+
     public JPanel getCercaUtenti() {return cercaUtentiPanel;}
 
+    /**
+     * Costruisce la schermata di ricerca utenti, impostando gli ascoltatori
+     * per il campo di testo e il pulsante di ricerca, e popolando la lista
+     * dei risultati iniziali (se forniti).
+     *
+     * @param controller L'oggetto {@link controller.Controller} che gestirà la logica di ricerca e azione.
+     * @param utente L'utente attualmente loggato (mittente dell'azione di ricerca/invito/rimozione).
+     * @param utenti La lista iniziale di {@link model.Utente} da visualizzare (risultati di una ricerca precedente o lista iniziale).
+     */
     public CercaUtenti(Controller controller, Utente utente, ArrayList<Utente> utenti) {
         UsernametextField.addActionListener(new ActionListener() {
             @Override
@@ -114,6 +132,15 @@ public class CercaUtenti {
         }
     }
 
+    /**
+     * Configura il listener per il pulsante "Invita" quando l'azione proviene da un {@link model.MembroTeam}.
+     * Delega al controller la logica per l'invito di un utente a unirsi al proprio team.
+     *
+     * @param controller Il controller per eseguire la logica di business.
+     * @param invita Il pulsante "Invita".
+     * @param mittente L'utente che sta inviando l'invito (MembroTeam).
+     * @param destinatario L'utente invitato.
+     */
     private void invitaMTMouseListener(Controller controller, JButton invita, Utente mittente, Utente destinatario) {
         invita.addMouseListener(new MouseAdapter() {
             @Override
@@ -124,6 +151,15 @@ public class CercaUtenti {
         });
     }
 
+    /**
+     * Configura il listener per il pulsante "Invita" quando l'azione proviene da un {@link model.Organizzatore}.
+     * Delega al controller la logica per l'invito di un partecipante a diventare Giudice.
+     *
+     * @param controller Il controller per eseguire la logica di business.
+     * @param invita Il pulsante "Invita".
+     * @param mittente L'utente che sta inviando l'invito (Organizzatore).
+     * @param destinatario L'utente invitato (Partecipante).
+     */
     private void invitaOMouseListener(Controller controller, JButton invita, Utente mittente, Utente destinatario) {
         invita.addMouseListener(new MouseAdapter() {
             @Override
@@ -134,6 +170,14 @@ public class CercaUtenti {
         });
     }
 
+    /**
+     * Configura il listener per il pulsante "Rimuovi".
+     * Delega al controller la logica per cancellare l'utente specificato dal sistema.
+     *
+     * @param controller Il controller per eseguire la logica di business.
+     * @param rimuovi Il pulsante "Rimuovi".
+     * @param utente L'utente da cancellare/rimuovere.
+     */
     private void rimuoviMouseListener(Controller controller, JButton rimuovi, Utente utente) {
         rimuovi.addMouseListener(new MouseAdapter() {
             @Override

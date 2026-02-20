@@ -6,21 +6,16 @@ import model.Utente;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Rappresenta l'interfaccia grafica per la visualizzazione dei dettagli di un singolo Hackathon.
+ */
 public class Hackathon {
     private static JFrame frameHackathon;
     private JPanel hackathonPanel;
@@ -48,13 +43,19 @@ public class Hackathon {
     private JButton effettuaCambiamentiButton;
     private JButton partecipaButton;
     private JPanel giudiciPanel;
-    private JLabel problemaLabel;
-    private JPanel filePanel;
-    private JButton mostraProblemaButton;
 
     public JFrame getFrameHackathon() {return frameHackathon;}
+
     public JPanel getHackathonPanel() {return hackathonPanel;}
 
+    /**
+     * Costruisce la schermata dell'Hackathon e inizializza i listener per le azioni dell'utente.
+     *
+     * @param controller Il controller per la gestione della logica di business.
+     * @param hackathon  L'oggetto modello contenente i dati dell'evento da mostrare.
+     * @param giudici    La lista degli organizzatori che fungono da giudici per l'evento.
+     * @param utente     L'utente attualmente autenticato nel sistema.
+     */
     public Hackathon(Controller controller, model.Hackathon hackathon, ArrayList<Organizzatore> giudici, Utente utente) {
         setHackathon(controller, hackathon, utente);
         aggiornaGiudiciPanel(giudici);
@@ -97,85 +98,15 @@ public class Hackathon {
                 controller.partecipa(Hackathon.this, (Utente) utente, hackathon);
             }
         });
-
-        filePanel.setDropTarget(new DropTarget() {
-            @Override
-            public synchronized void drop(DropTargetDropEvent evt) {
-                try {
-                    evt.acceptDrop(DnDConstants.ACTION_COPY);
-
-                    // accetto solo file dal filesystem
-                    if (!evt.getTransferable()
-                            .isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                        JOptionPane.showMessageDialog(filePanel,
-                                "Puoi trascinare solo file",
-                                "Errore",
-                                JOptionPane.ERROR_MESSAGE);
-                        evt.dropComplete(false);
-                        return;
-                    }
-
-                    @SuppressWarnings("unchecked")
-                    java.util.List<File> files = (List<File>) evt.getTransferable()
-                            .getTransferData(DataFlavor.javaFileListFlavor);
-
-                    // un solo file
-                    if (files.size() != 1) {
-                        JOptionPane.showMessageDialog(filePanel,
-                                "Carica un solo file",
-                                "Errore",
-                                JOptionPane.ERROR_MESSAGE);
-                        evt.dropComplete(false);
-                        return;
-                    }
-
-                    File file = files.get(0);
-
-                    // solo .txt
-                    if (!file.getName().toLowerCase().endsWith(".txt")) {
-                        JOptionPane.showMessageDialog(filePanel,
-                                "Il file deve essere .txt",
-                                "Errore",
-                                JOptionPane.ERROR_MESSAGE);
-                        evt.dropComplete(false);
-                        return;
-                    }
-
-                    // leggo contenuto
-                    String contenuto = Files.readString(
-                            file.toPath(),
-                            StandardCharsets.UTF_8
-                    );
-
-                    // unica chiamata richiesta
-                    controller.salvaProblema(Hackathon.this, hackathon, contenuto);
-
-                    JOptionPane.showMessageDialog(filePanel,
-                            "Problema caricato con successo");
-
-                    evt.dropComplete(true);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(filePanel,
-                            "Errore durante il caricamento del file",
-                            "Errore",
-                            JOptionPane.ERROR_MESSAGE);
-                    evt.dropComplete(false);
-                }
-            }
-        });
-
-
-        mostraProblemaButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                controller.mostraProblema(hackathon);
-            }
-        });
     }
 
+    /**
+     * Popola i campi di testo e configura la visibilità dei pulsanti in base alle regole di business:
+     *
+     * @param controller Riferimento al controller per l'accesso alla data corrente.
+     * @param hackathon  I dati dell'hackathon da renderizzare.
+     * @param utente     L'utente attuale per il controllo dei permessi.
+     */
     private void setHackathon(Controller controller, model.Hackathon hackathon, Utente utente) {
         titolo.setText(hackathon.getTitolo());
         sede.setText(hackathon.getSede());
@@ -197,32 +128,13 @@ public class Hackathon {
             apriIscrizioniButton.setVisible(false);
             effettuaCambiamentiButton.setVisible(false);
             partecipaButton.setVisible(false);
+            partecipantiButton.setVisible(false);
         }
         else {
-            if(hackathon.getDataInizio().isBefore(controller.oggi)) {
-                problemaLabel.setVisible(false);
-                filePanel.setVisible(false);
-            } else {
-                mostraProblemaButton.setVisible(false);
-            }
-
-            if (utente.USERNAME.equals(hackathon.getOrganizzatore())) {
-                problemaLabel.setVisible(true);
-                filePanel.setVisible(true);
-                mostraProblemaButton.setVisible(true);
-            } else {
+            if (!utente.USERNAME.equals(hackathon.getOrganizzatore()) ||
+                    hackathon.getAperturaRegistrazioni()) {
                 apriIscrizioniButton.setVisible(false);
                 effettuaCambiamentiButton.setVisible(false);
-                partecipantiButton.setVisible(false);
-                problemaLabel.setVisible(false);
-                filePanel.setVisible(false);
-            }
-            if (hackathon.getAperturaRegistrazioni()) {
-                apriIscrizioniButton.setVisible(false);
-                effettuaCambiamentiButton.setVisible(false);
-                partecipantiButton.setVisible(false);
-                problemaLabel.setVisible(false);
-                filePanel.setVisible(false);
             }
 
             if (!hackathon.getAperturaRegistrazioni()) {
@@ -233,6 +145,11 @@ public class Hackathon {
         }
     }
 
+    /**
+     * Aggiorna  il pannelo dei giudici.
+     *
+     * @param giudici La lista di oggetti {@link Organizzatore} da visualizzare.
+     */
     private void aggiornaGiudiciPanel(ArrayList<Organizzatore> giudici) {
         giudiciPanel.removeAll();
         giudiciPanel.setLayout(new BoxLayout(giudiciPanel, BoxLayout.Y_AXIS));

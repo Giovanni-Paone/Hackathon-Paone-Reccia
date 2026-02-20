@@ -6,6 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Rappresenta l'interfaccia grafica per la schermata di login dell'applicazione.
+ * Questa classe è responsabile della creazione, visualizzazione e gestione
+ * degli eventi di interazione (input username/password, click sul login, click su iscrizione).
+ * Utilizza un oggetto {@link controller.Controller} per gestire la logica di business.
+*/
 public class Login {
     private static JFrame frameLogin;
     private JPanel panel1;
@@ -17,11 +23,22 @@ public class Login {
     private JLabel usernameLabel;
     private JLabel passwordLabel;
 
+
     public JFrame getFrameLogin() {return frameLogin;}
+
     public JPanel getPanel1() {return panel1;}
+
     public JTextField getUsernameTextField() {return usernameTextField;}
+
     public JPasswordField getPasswordField1() {return passwordField1;}
 
+    /**
+     * Costruisce la schermata di Login e inizializza gli ascoltatori di eventi.
+     * Tutti gli eventi di interazione (pressione tasto Invio nei campi di testo,
+     * click sui pulsanti) delegano la logica al {@code controller} fornito.
+     *
+     * @param controller L'oggetto Controller che gestirà le azioni di Login e Iscrizione.
+     */
     public Login(Controller controller) {
         usernameTextField.addActionListener(new ActionListener() {
             @Override

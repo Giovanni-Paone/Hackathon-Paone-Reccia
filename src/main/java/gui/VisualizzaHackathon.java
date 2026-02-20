@@ -9,6 +9,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * Rappresenta la schermata per visualizzare una lista di Hackathon,
+ * tipicamente quelli passati o quelli attuali filtrati.
+ * L'interfaccia include campi di testo per filtrare gli Hackathon per
+ * titolo e organizzatore, e visualizza i risultati in un elenco dinamico.
+ * La visualizzazione di ciascun Hackathon nella lista include il titolo,
+ * l'organizzatore, le date e un pulsante per visualizzare i dettagli.
+ */
 public class VisualizzaHackathon {
     private static JFrame frameVisualizzaHackathon;
     private JPanel mainPanel;
@@ -20,8 +28,19 @@ public class VisualizzaHackathon {
     private JScrollBar scrollBar1;
     private JPanel listPanel;
 
+
     public JFrame getFrameVisualizzaHackathon() {return frameVisualizzaHackathon;}
 
+    /**
+     * Costruisce la schermata di Visualizzazione Hackathon.
+     * Configura il layout (utilizzando {@link GridBagLayout} per i filtri),
+     * inizializza gli ascoltatori per i filtri e il pulsante di ricerca,
+     * e popola dinamicamente la lista con gli Hackathon forniti.
+     *
+     * @param controller L'oggetto {@link controller.Controller} che gestirà le azioni di ricerca e visualizzazione dettaglio.
+     * @param utente L'utente attualmente loggato.
+     * @param hackathons L'{@link java.util.ArrayList} iniziale di {@link model.Hackathon} da visualizzare.
+     */
     VisualizzaHackathon(Controller controller, Utente utente, ArrayList<model.Hackathon> hackathons) {
         titoloTextField.addActionListener(e -> organizzatoreTextField.requestFocus());
         organizzatoreTextField.addActionListener(e ->

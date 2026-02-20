@@ -7,6 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Rappresenta l'interfaccia grafica per la creazione di un nuovo Hackathon.
+ * Questa schermata permette a un {@link model.Organizzatore} di inserire
+ * tutti i dettagli necessari (titolo, sede, date e limiti di iscrizione)
+ * per registrare un nuovo evento nel sistema.
+  */
 public class CreazioneHackathon {
     private static JFrame frameCreazioneHackathon;
     private JPanel creazioneHackathonPanel;
@@ -25,15 +31,28 @@ public class CreazioneHackathon {
     private JButton creaButton;
     private JLabel creaHackathonLabel;
 
+
     public JFrame getFrameCreazioneHackathon() {return frameCreazioneHackathon;}
+
     public JPanel getCreazioneHackathonPanel() {return creazioneHackathonPanel;}
+
     public JTextField getTitoloTextField() {return titoloTextField; }
+
     public JTextField getSedeTextField() {return sedeTextField; }
+
     public JSpinner getDataInizioSpinner() {return dataInizioSpinner; }
+
     public JSpinner getDataFineSpinner() {return dataFineSpinner; }
+
     public JSpinner getLimiteIscrittiSpinner() { return limiteIscrittiSpinner; }
+
     public JSpinner getLimiteComponentiSquadreSpinner() { return limiteComponentiSquadreSpinner; }
 
+    /**
+     * Costruisce la schermata di Creazione Hackathon.
+     *
+     * @param organizzatore L'oggetto {@link model.Organizzatore} che sta creando l'Hackathon.
+     */
     public CreazioneHackathon(Controller controller, Organizzatore organizzatore) {
             dataInizioSpinner.setModel(new SpinnerDateModel());
             dataInizioSpinner.setEditor(new JSpinner.DateEditor(dataInizioSpinner, "dd/MM/yyyy"));
@@ -44,7 +63,7 @@ public class CreazioneHackathon {
         titoloTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(2==2){ //nome inesistente //non ricordo cosa sia questo
+                if(2==2){
                     sedeTextField.requestFocus();
                 }
             }

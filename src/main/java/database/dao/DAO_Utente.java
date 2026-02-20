@@ -7,14 +7,32 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * Data Access Object (DAO) per la gestione della persistenza degli utenti nel database.
+ * Fornisce metodi per la registrazione, la cancellazione logica, l'autenticazione
+ * e la ricerca degli utenti.
+ */
 public class DAO_Utente {
 
     private Connection connection;
 
+    /**
+     * Costruttore della classe. Inizializza la connessione al database
+     * utilizzando il pattern Singleton della classe {@link ConnessioneDatabase}.
+     * @throws SQLException Se si verifica un errore durante il recupero della connessione.
+     */
     public DAO_Utente() throws SQLException {
         this.connection = ConnessioneDatabase.getInstance().connection;
     }
 
+    /**
+     * Registra un nuovo utente nel sistema con ruolo predefinito (Ruolo = 1).
+     * @param utente   Lo username del nuovo utente.
+     * @param password La password associata all'utente.
+     * @return {@code true} se l'inserimento è avvenuto con successo,
+     * {@code false} se lo username è già esistente (Violazione Unique Constraint).
+     * @throws SQLException Se si verifica un errore SQL imprevisto.
+     */
     public boolean save(String utente, String password) throws SQLException {
         String sql = "INSERT INTO UTENTE (Username, Password, Ruolo) VALUES (?, ?, 1)";
 
@@ -32,6 +50,14 @@ public class DAO_Utente {
         }
     }
 
+    /**
+     * Gestisce la rimozione di un utente. Esegue una cancellazione logica (imposta ruolo a 30)
+     * e gestisce la rimozione dell'utente dai team e dalle partecipazioni se l'hackathon
+     * corrente non è ancora iniziato.
+     * @param username Lo username dell'utente da eliminare.
+     * @return {@code true} se l'operazione è completata (default).
+     * @throws SQLException Se si verifica un errore durante le query di aggiornamento o eliminazione.
+     */
     public boolean delete(String username) throws SQLException {
         String sql = "UPDATE utente SET ruolo = 30 WHERE username = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -90,7 +116,16 @@ public class DAO_Utente {
         return true;
     }
 
-
+    /**
+     * Esegue l'autenticazione di un utente e restituisce l'oggetto specifico in base al ruolo.
+     * Il metodo gestisce diversi tipi di utenti: Organizzatori, Giudici, Utenti generici
+     * e Membri di un Team, caricando per questi ultimi le informazioni del team corrente.
+     * @param username Lo username per il login.
+     * @param password La password per il login.
+     * @return Un'istanza di {@link Utente}, {@link Organizzatore} o {@link MembroTeam},
+     * oppure {@code null} se le credenziali sono errate.
+     * @throws SQLException Se si verifica un errore durante il recupero dei dati o la gestione del ResultSet.
+     */
     public Utente login(String username, String password) throws SQLException {
         String sql = "SELECT Username, Ruolo FROM UTENTE WHERE Username = ? AND Password = ?";
 
@@ -175,8 +210,14 @@ public class DAO_Utente {
         return null;
     }
 
-
-public ArrayList<Utente> findByKey(String username) throws SQLException {
+    /**
+     * Ricerca gli utenti attivi (esclusi amministratori e utenti cancellati) il cui username
+     * inizia con la stringa fornita.
+     * @param username Il prefisso dello username da cercare.
+     * @return Una lista di {@link Utente} che soddisfano i criteri di ricerca.
+     * @throws SQLException Se si verifica un errore durante l'esecuzione della query.
+     */
+    public ArrayList<Utente> findByKey(String username) throws SQLException {
     String sql = """
             SELECT Username, Ruolo 
             FROM UTENTE 
@@ -204,7 +245,14 @@ public ArrayList<Utente> findByKey(String username) throws SQLException {
     return utenti;
 }
 
-public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
+    /**
+     * Ricerca utenti specifici con ruolo 1 (Utente base) o 2 (Partecipante)
+     * tramite prefisso dello username.
+     * @param username Il prefisso dello username da cercare.
+     * @return Una lista di {@link Utente} filtrata per ruolo 1 o 2.
+     * @throws SQLException Se si verifica un errore durante il recupero dei dati.
+     */
+    public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
     String sql = """
             SELECT Username, Ruolo FROM UTENTE
             WHERE Username LIKE ? AND (ruolo = 1 OR ruolo = 2)

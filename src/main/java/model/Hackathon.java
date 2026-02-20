@@ -1,3 +1,7 @@
+package model;
+
+import java.time.LocalDate;
+
 /**
  * Rappresenta un Hackathon con i suoi dettagli principali,
  * come il titolo, la sede, l'organizzatore, le date, i limiti di iscrizione
@@ -6,11 +10,6 @@
  * @author Paone Giovanni e Reccia Antonio
  * @version 1.0
  */
-package model;
-
-import java.time.LocalDate;
-import java.util.Date;
-
 public class Hackathon {
     private String titolo;
     private String sede;
@@ -25,7 +24,7 @@ public class Hackathon {
 
     /**
      * Costruisce un oggetto Hackathon con i parametri essenziali.
-     * I contatori di team e partecipanti iscritti sono inizializzati a zero.
+     * I contatori di team e partecipanti iscritti sono inizializzati a zero e le registrazioni sono chiuse di default.
      *
      * @param titolo Il titolo dell'Hackathon.
      * @param sede La sede in cui si svolge l'Hackathon.

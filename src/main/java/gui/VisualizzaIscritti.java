@@ -9,12 +9,29 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Rappresenta la schermata per visualizzare la lista dei partecipanti iscritti
+ * a un Hackathon, organizzati per team.
+ * Questa interfaccia gestisce la visibilità delle azioni (rimozione team/utente,
+ * visualizzazione file, aggiunta voto) in modo dinamico in base al ruolo dell'utente
+ * loggato (Organizzatore/Giudice/Partecipante) e alla fase dell'Hackathon.
+ */
 public class VisualizzaIscritti {
 
     private static JFrame frameVisualizzaIscritti;
     private JPanel visualizzaIscrittiPanel;
     private JScrollPane scrollPane;
 
+    /**
+     * Costruisce la schermata, popolando dinamicamente il pannello con la lista dei team
+     * e i loro partecipanti, e configurando i pulsanti d'azione (Rimozione, File, Voto)
+     * con la logica di visibilità basata sul contesto.
+     *
+     * @param controller L'oggetto {@link controller.Controller} che gestirà le azioni degli utenti (es. rimozione, voto, file).
+     * @param hackathon L'{@link model.Hackathon} i cui iscritti vengono visualizzati.
+     * @param teams L'{@link java.util.ArrayList} dei {@link model.Team} iscritti all'Hackathon.
+     * @param utente L'{@link model.Utente} attualmente loggato.
+     */
     public VisualizzaIscritti(Controller controller, Hackathon hackathon,
                               ArrayList<Team> teams, Utente utente) {
 

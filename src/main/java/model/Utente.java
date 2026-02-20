@@ -1,22 +1,17 @@
+package model;
+
 /**
  * Classe base (Superclasse) che rappresenta un utente generico all'interno
  * del sistema, definendo le proprietà fondamentali come lo username e il ruolo.
  * Tutte le tipologie specifiche di utente (es. Organizzatore) dovrebbero
  * estendere questa classe.
  */
-package model;
-
 public class Utente {
-    /**
-     * Lo username univoco dell'utente. È un campo immutabile (final)
-     * e funge da identificativo primario
-     */
+    /** Lo username univoco dell'utente. */
     public final String USERNAME;
 
     /**
-     * Un codice numerico che rappresenta il ruolo o il livello di accesso
-     * dell'utente nel sistema.
-     */
+     * Un codice numerico che rappresenta il ruolo dell'utente. */
     private int ruolo;
 
     /**

@@ -8,7 +8,7 @@ public class Invito {
      * Costruisce un oggetto Invito.
      *
      * @param mittente L'utente che invia l'invito.
-     * @param permesso ** DA CONTROLLARE **
+     * @param permesso
      */
     public Invito(String mittente, boolean permesso) {
         this.MITTENTE = mittente;

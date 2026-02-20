@@ -13,6 +13,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+/**
+ * Rappresenta la schermata Home specifica per un utente che è Membro di un Team
+ * (MembroTeam).
+ * Questa interfaccia visualizza i dettagli del team, la lista dei membri,
+ * e fornisce funzionalità per navigare gli Hackathon, invitare nuovi membri
+ * e caricare file di progetto tramite drag-and-drop.
+ */
 public class MembroTeamHome {
     private static JFrame frameMembroTeamHome;
     private JPanel membroTeamHomePanel;
@@ -25,8 +32,17 @@ public class MembroTeamHome {
     private JPanel membriPanelContainer;
     private JPanel filePanel;
 
+
     public JPanel getMembroTeamHomePanel() {return membroTeamHomePanel;}
 
+    /**
+     * Costruisce la schermata Home per il Membro Team, inizializzando i componenti,
+     * visualizzando i membri del team e configurando gli ascoltatori di eventi,
+     * inclusa l'area di drag-and-drop.
+     *
+     * @param controller L'oggetto {@link controller.Controller} per la gestione della logica di business.
+     * @param utente L'utente attualmente loggato, di tipo {@link model.MembroTeam}.
+     */
     public MembroTeamHome(Controller controller, MembroTeam utente) {
         teamLabel.setText("Team: " + utente.TEAM.NOME_TEAM);
 
@@ -70,6 +86,11 @@ public class MembroTeamHome {
         });
 
 
+        /**
+         * Configurazione dell'area DropTarget per gestire il drag-and-drop dei file.
+         * Questa implementazione gestisce la ricezione di file locali, la validazione
+         * dell'estensione (.txt) e la delega al controller per il salvataggio dei contenuti.
+         */
         filePanel.setDropTarget(new DropTarget() {
             @Override
             public synchronized void drop(DropTargetDropEvent evt) {
