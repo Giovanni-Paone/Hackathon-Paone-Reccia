@@ -15,7 +15,7 @@ public class DAO_Hackathon {
 
     /**
      * Inizializza il DAO recuperando la connessione attiva dal singleton ConnessioneDatabase.
-     * @throws SQLException Se si verifica un errore durante il recupero della connessione
+     * @throws SQLException Se si verifica un errore durante il recupero della connessione.
      */
     public DAO_Hackathon() throws SQLException {
         this.connection = ConnessioneDatabase.getInstance().connection;
