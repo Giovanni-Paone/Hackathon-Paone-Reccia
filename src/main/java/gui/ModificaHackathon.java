@@ -97,10 +97,16 @@ public class ModificaHackathon {
      * @param hackathon L'oggetto {@link model.Hackathon} da cui recuperare i dati.
      */
     private void setHackathon(model.Hackathon hackathon) {
+        java.util.Date dateInizio = java.util.Date.from(hackathon.getDataInizio()
+                .atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+
+        java.util.Date dateFine = java.util.Date.from(hackathon.getDataFine()
+                        .atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+
         titoloTextField.setText(hackathon.getTitolo());
         sedeTextField.setText(hackathon.getSede());
-        dataInizioSpinner.setValue(hackathon.getDataInizio());
-        dataFineSpinner.setValue(hackathon.getDataFine());
+        dataInizioSpinner.setValue(dateInizio);
+        dataFineSpinner.setValue(dateFine);
         limiteComponentiSquadreSpinner.setValue(hackathon.getMaxTeamSize());
         limiteIscrittiSpinner.setValue(hackathon.getMaxIscritti());
     }

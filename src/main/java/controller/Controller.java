@@ -547,38 +547,41 @@ public class Controller {
      * @param organizzatore Organizzatore che crea l'evento.
      */
     public void creaHackathon(CreazioneHackathon creaHackathon, Organizzatore organizzatore) {
-            LocalDate dataInizio = (LocalDate) creaHackathon.getDataInizioSpinner().getValue();
-            LocalDate dataFine = (LocalDate) creaHackathon.getDataFineSpinner().getValue();
-            int limiteIscritti = (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue();
-            int limiteComponentiSquadra = (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue();
-            String titolo = creaHackathon.getTitoloTextField().getText();
-            String sede = creaHackathon.getSedeTextField().getText();
+        java.util.Date utilDateInizio = (java.util.Date) creaHackathon.getDataInizioSpinner().getValue();
+        java.util.Date utilDateFine = (java.util.Date) creaHackathon.getDataFineSpinner().getValue();
 
-            if (dataInizio.isAfter(dataFine) || dataInizio.isBefore(oggi)) {
-                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
-                        "la data iniziale o finale non sono corrette",
-                        "Errore",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            } else if (limiteIscritti < 4) {
-                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
-                        "Non possono esserci meno di 4 iscritti",
-                        "Errore",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            } else if (limiteComponentiSquadra < 2) {
-                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
-                        "Non possono esserci meno di 2 squadre",
-                        "Errore",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            } else if (titolo.isEmpty() || sede.isEmpty()) {
-                JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
-                        "Dati mancanti",
-                        "Errore",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        LocalDate dataInizio = utilDateInizio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        LocalDate dataFine = utilDateFine.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        int limiteIscritti = (Integer) creaHackathon.getLimiteIscrittiSpinner().getValue();
+        int limiteComponentiSquadra = (Integer) creaHackathon.getLimiteComponentiSquadreSpinner().getValue();
+        String titolo = creaHackathon.getTitoloTextField().getText();
+        String sede = creaHackathon.getSedeTextField().getText();
+
+        if (dataInizio.isAfter(dataFine) || dataInizio.isBefore(oggi)) {
+            JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                    "la data iniziale o finale non sono corrette",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } else if (limiteIscritti < 4) {
+            JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                    "Non possono esserci meno di 4 iscritti",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } else if (limiteComponentiSquadra < 2) {
+            JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                    "Non possono esserci meno di 2 squadre",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } else if (titolo.isEmpty() || sede.isEmpty()) {
+            JOptionPane.showMessageDialog(creaHackathon.getCreazioneHackathonPanel(),
+                    "Dati mancanti",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         int risposta = JOptionPane.showConfirmDialog(creaHackathon.getCreazioneHackathonPanel(),
                 "Sei sicuro dei dati inseriti?",
@@ -747,8 +750,11 @@ public class Controller {
      * @param giudici           La lista aggiornata dei giudici.
      */
     public void modificaHackathon(ModificaHackathon modificaHackathon, Organizzatore organizzatore, Hackathon hackathon, ArrayList<Organizzatore> giudici) {
-            LocalDate dataInizio = (LocalDate) modificaHackathon.getDataInizioSpinner().getValue();
-            LocalDate dataFine = (LocalDate) modificaHackathon.getDataFineSpinner().getValue();
+        java.util.Date utilDateInizio = (java.util.Date) modificaHackathon.getDataInizioSpinner().getValue();
+        java.util.Date utilDateFine = (java.util.Date) modificaHackathon.getDataFineSpinner().getValue();
+
+        LocalDate dataInizio = utilDateInizio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        LocalDate dataFine = utilDateFine.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
             int limiteIscritti = (Integer) modificaHackathon.getLimiteIscrittiSpinner().getValue();
             int limiteComponentiSquadra = (Integer) modificaHackathon.getLimiteComponentiSquadreSpinner().getValue();
             String titolo = modificaHackathon.getTitoloTextField().getText();

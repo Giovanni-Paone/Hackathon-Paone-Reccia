@@ -345,8 +345,7 @@ public class DAO_Team {
                     String titolo = rs.getString("nomefile");
                     String progressi = rs.getString("progressi");
 
-                    files.add(titolo);
-                    files.add(progressi);
+                    files.add(titolo + "\n\n" + progressi);
                 }
             }
 
