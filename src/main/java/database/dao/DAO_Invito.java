@@ -2,6 +2,7 @@ package database.dao;
 
 import database.ConnessioneDatabase;
 import model.*;
+import interfaceDAO.Interface_DAO_Invito;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +12,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
- * Data Access Object (DAO) per la gestione della persistenza degli inviti nel database.
+ * DAO per la gestione della persistenza degli inviti nel database.
  * Gestisce le operazioni di creazione, eliminazione, ricerca e l'accettazione degli inviti,
  * con conseguente aggiornamento dei ruoli degli utenti (Organizzatore o Membro del Team).
  */
-public class DAO_Invito {
+public class DAO_Invito implements Interface_DAO_Invito {
     private final Connection connection;
 
     /**
@@ -34,6 +35,7 @@ public class DAO_Invito {
      * @return {@code true} se l'operazione ha successo, {@code false} se l'invito esiste già.
      * @throws SQLException Se si verifica un errore SQL durante l'inserimento.
      */
+    @Override
     public boolean save(Invito invito, String destinatario) throws SQLException {
         Invito oldInvito = this.getInvito(destinatario, invito.MITTENTE);
         if (oldInvito != null) {return false;}
@@ -60,6 +62,7 @@ public class DAO_Invito {
      * @return {@code true} se l'invito è stato rimosso, {@code false} altrimenti.
      * @throws SQLException Se si verifica un errore nel database.
      */
+    @Override
     public boolean delete(Utente utente, Invito invito) throws SQLException {
         String sql = " DELETE FROM Invito WHERE destinatario = ? AND mittente = ?";
 
@@ -78,6 +81,7 @@ public class DAO_Invito {
      * @return L'oggetto {@link Invito} se trovato, {@code null} altrimenti.
      * @throws SQLException Se si verifica un errore nella query.
      */
+    @Override
     public Invito getInvito(String destinatario, String mittente) throws SQLException {
         String sql = """
         SELECT destinatario, mittente, datainvito, permesso
@@ -109,6 +113,7 @@ public class DAO_Invito {
      * @return Una lista di inviti ricevuti.
      * @throws SQLException In caso di errori SQL.
      */
+    @Override
     public ArrayList<Invito> getInviti(Utente destinatario) throws SQLException {
         ArrayList<Invito> inviti = new ArrayList<>();
 
@@ -142,6 +147,7 @@ public class DAO_Invito {
      * @return Lista di inviti che soddisfano il filtro.
      * @throws SQLException In caso di errori SQL.
      */
+    @Override
     public ArrayList<Invito> getInviti(String destinatario, String mittente) throws SQLException {
         ArrayList<Invito> inviti = new ArrayList<>();
 
@@ -172,45 +178,10 @@ public class DAO_Invito {
     }
 
     /**
-     * Recupera la lista degli inviti spediti da un determinato utente.
-     * @param mittente L'utente che ha inviato gli inviti.
-     * @return Lista di inviti mandati.
-     * @throws SQLException In caso di errori SQL.
-     */
-    public ArrayList<Invito> getInvitiMandati(Utente mittente) throws SQLException {
-        ArrayList<Invito> inviti = new ArrayList<>();
-
-        String sql = """
-        SELECT destinatario, mittente, datainvito
-        FROM invito
-        WHERE mittente = ?
-        ORDER BY datainvito DESC 
-        """;
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, mittente.USERNAME);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Invito invito = new Invito(
-                            mittente.USERNAME,
-                            rs.getBoolean("permesso")
-                    );
-                    inviti.add(invito);
-                }
-            }
-        }
-
-        return inviti;
-    }
-
-    /**
      * Gestisce la logica di accettazione di un invito.
-     * <p>
      * Se l'invito ha {@code permesso = true}, l'utente diventa un Giudice/Organizzatore.<br>
      * Se l'invito ha {@code permesso = false}, l'utente viene aggiunto a un Team come partecipante,
      * previa verifica della disponibilità di posti nell'Hackathon e nel Team.
-     * </p>
      * Al termine, elimina tutti gli inviti pendenti per il destinatario e, se il team è pieno,
      * elimina tutti gli inviti mandati da quel team.
      * @param destinatario L'utente che accetta l'invito.
@@ -218,6 +189,7 @@ public class DAO_Invito {
      * @return L'oggetto {@link Utente} aggiornato col nuovo ruolo, o {@code null} se l'operazione fallisce (es. hackathon pieno).
      * @throws SQLException Se si verifica un errore durante le molteplici operazioni sul database.
      */
+    @Override
     public Utente accetta(Utente destinatario, Invito invito) throws SQLException {
         DAO_Hackathon daoHackathon = new DAO_Hackathon();
         Hackathon hackathon = daoHackathon.findHackathonCorrente();

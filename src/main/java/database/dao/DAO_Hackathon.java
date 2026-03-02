@@ -1,6 +1,7 @@
 package database.dao;
 
 import database.ConnessioneDatabase;
+import interfaceDAO.Interface_DAO_Hackathon;
 import model.Hackathon;
 import model.Organizzatore;
 import model.Utente;
@@ -9,7 +10,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class DAO_Hackathon {
+public class DAO_Hackathon implements Interface_DAO_Hackathon {
 
     private final Connection connection;
 
@@ -27,6 +28,7 @@ public class DAO_Hackathon {
      * @return true se l'inserimento avviene con successo, false se il titolo è già presente (violazione unique).
      * @throws SQLException Se si verifica un errore SQL imprevisto.
      */
+    @Override
     public boolean save(Hackathon hackathon) throws SQLException {
         String sql = """
                 INSERT INTO hackathon (titolo, sede, datainizio, datafine, maxiscritti, maxteamsize,
@@ -60,6 +62,7 @@ public class DAO_Hackathon {
      * @return true se l'aggiornamento avviene con successo, false in caso di conflitto di nomi.
      * @throws SQLException In caso di errore durante l'esecuzione della query.
      */
+    @Override
     public boolean update(String oldtitolo, String organizzatore, Hackathon hackathon) throws SQLException {
         String sql = """
             UPDATE hackathon
@@ -90,29 +93,10 @@ public class DAO_Hackathon {
      * * @return L'oggetto Hackathon trovato, oppure null se non ci sono eventi attivi.
      * @throws SQLException Se si verifica un errore nella query.
      */
+    @Override
     public Hackathon findHackathonCorrente() throws SQLException {
         String sql = "SELECT * FROM hackathon WHERE datafine > CURRENT_DATE";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return creaHackathon(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Ricerca un hackathon tramite il titolo (utilizzando l'operatore LIKE).
-     * @param titolo Parte del titolo da ricercare.
-     * @return Il primo Hackathon che corrisponde ai criteri di ricerca, null altrimenti.
-     * @throws SQLException In caso di errore nel database.
-     */
-    public Hackathon findByKey(String titolo) throws SQLException {
-        String sql = "SELECT * FROM hackathon WHERE titolo LIKE ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, titolo + "%"); // CORRETTO
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return creaHackathon(rs);
@@ -130,6 +114,7 @@ public class DAO_Hackathon {
      * @return ArrayList di oggetti Hackathon corrispondenti ai filtri.
      * @throws SQLException Se la query fallisce.
      */
+    @Override
     public ArrayList<Hackathon> getHackathons(String hackathon, String organizzatore) throws SQLException {
         String sql = "SELECT * FROM hackathon WHERE titolo LIKE ? AND organizzatore LIKE ? ORDER BY datafine DESC";
         ArrayList<Hackathon> hackathons = new ArrayList<>();
@@ -153,6 +138,7 @@ public class DAO_Hackathon {
      * @return true se l'operazione è andata a buon fine, false altrimenti.
      * @throws SQLException Se si verifica un errore durante l'aggiornamento del record.
      */
+    @Override
     public boolean aperturaRegistrazioni(String titolo) throws SQLException {
         String sql = "UPDATE hackathon SET aperturaregistrazioni = true, dataaperturaregistrazioni = CURRENT_DATE WHERE titolo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -169,7 +155,8 @@ public class DAO_Hackathon {
      * @return Un oggetto Hackathon popolato con i dati del database.
      * @throws SQLException Se si verifica un errore nel recupero delle colonne.
      */
-    private Hackathon creaHackathon(ResultSet rs) throws SQLException {
+    @Override
+    public Hackathon creaHackathon(ResultSet rs) throws SQLException {
         Hackathon hackathon = new Hackathon(
                 rs.getString("titolo"),
                 rs.getString("sede"),
@@ -210,6 +197,7 @@ public class DAO_Hackathon {
      * @return Una nuova istanza di Utente con il ruolo aggiornato.
      * @throws SQLException In caso di violazione di vincoli o errore di connessione.
      */
+    @Override
     public Utente partecipa(Hackathon hackathon, Utente utente) throws SQLException {
         String updateSql = "UPDATE utente SET ruolo = 2 WHERE username = ?";
 
@@ -235,6 +223,7 @@ public class DAO_Hackathon {
      * @return ArrayList di oggetti Organizzatore (giudici), ordinati alfabeticamente per username.
      * @throws SQLException Se la query fallisce.
      */
+    @Override
     public ArrayList<Organizzatore> findAllGiudici(Hackathon hackathon) throws SQLException {
         ArrayList<Organizzatore> result = new ArrayList<>();
         String sql = "SELECT username FROM giudice WHERE hackathon = ? ORDER BY username ASC";
@@ -258,6 +247,7 @@ public class DAO_Hackathon {
      * @param hackathon L'hackathon da cui l'utente deve essere rimosso.
      * @throws SQLException In caso di errore durante la cancellazione o l'aggiornamento del ruolo.
      */
+    @Override
     public void squalifica(String username, Hackathon hackathon) throws SQLException {
         String sql = "DELETE FROM partecipanti WHERE hackathon = ? AND username = ?";
 
@@ -282,6 +272,7 @@ public class DAO_Hackathon {
      * @param problema Il testo descrittivo del problema da risolvere.
      * @throws SQLException Se l'aggiornamento fallisce.
      */
+    @Override
     public void salvaProblema(String hackathon, String problema) throws SQLException {
             String sql = "UPDATE hackathon SET problema = ? WHERE titolo = ?";
 
@@ -299,6 +290,7 @@ public class DAO_Hackathon {
      * @return La stringa contenente il problema, oppure null se non è ancora stato definito o l'hackathon non esiste.
      * @throws SQLException In caso di errore nella lettura dal database.
      */
+    @Override
     public String getProblema(String hackathon) throws SQLException {
 
         String sql = "SELECT problema FROM hackathon WHERE titolo = ?";

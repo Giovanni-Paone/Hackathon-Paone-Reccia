@@ -2,19 +2,19 @@ package database.dao;
 
 import database.ConnessioneDatabase;
 import model.Hackathon;
-import model.MembroTeam;
 import model.Team;
 import model.Utente;
+import interfaceDAO.Interface_DAO_Team;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Data Access Object (DAO) per la gestione della persistenza dei Team.
+ * DAO per la gestione della persistenza dei Team.
  * Si occupa di interfacciare il sistema con le tabelle del database relative ai team,
  * ai partecipanti e ai file caricati durante gli hackathon.
  */
-public class DAO_Team {
+public class DAO_Team implements Interface_DAO_Team {
 
     private final Connection connection;
 
@@ -86,28 +86,6 @@ public class DAO_Team {
             return stmt.executeUpdate() > 0;
         }
     }
-
-    /* probabilmente inutile, vedrò che fare
-    public ArrayList<Team> findByKey(String nomeTeam, Hackathon hackathon) throws SQLException {
-        String sql = "SELECT DISTINCT nometeam FROM team WHERE nometeam LIKE ? AND hackathon = ? GROUP BY hackathon, nometeam";
-        ArrayList<Team> teams = new ArrayList<>();
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, nomeTeam + "%"); // CORRETTO
-            stmt.setString(2, hackathon.getTitolo());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Team team = new Team(rs.getString("nometeam"), hackathon.getTitolo());
-                    teams.add(team);
-                }
-            }
-        }
-
-        return teams;
-    }
-
-     */
 
     /**
      * Recupera la lista dei team e dei relativi partecipanti prima dell'inizio dell'hackathon.

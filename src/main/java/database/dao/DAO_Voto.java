@@ -1,16 +1,15 @@
 package database.dao;
 import database.ConnessioneDatabase;
-import model.Team;
+import interfaceDAO.Interface_DAO_Voto;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
- * Data Access Object (DAO) per la gestione della tabella dei voti nel database.
+ * DAO per la gestione della tabella dei voti nel database.
  * Questa classe fornisce i metodi per persistere le valutazioni assegnate dai giudici
  * ai vari team durante gli hackathon.
  */
-public class DAO_Voto {
+public class DAO_Voto implements Interface_DAO_Voto {
 
     private Connection connection;
 
@@ -32,6 +31,7 @@ public class DAO_Voto {
      * @return {@code true} se il salvataggio è avvenuto con successo, {@code false} altrimenti.
      * @throws SQLException Se si verifica un errore durante l'esecuzione della query SQL.
      */
+    @Override
     public boolean save(String hackathon, String team, String giudice, int voto) throws SQLException {
         String sql = "INSERT INTO voto_team (hackathon, team, giudice, voto) VALUES (?, ?, ?, ?)";
 

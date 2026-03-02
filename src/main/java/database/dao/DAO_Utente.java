@@ -2,17 +2,18 @@ package database.dao;
 
 import database.ConnessioneDatabase;
 import model.*;
+import interfaceDAO.Interface_DAO_Utente;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Data Access Object (DAO) per la gestione della persistenza degli utenti nel database.
+ * DAO per la gestione della persistenza degli utenti nel database.
  * Fornisce metodi per la registrazione, la cancellazione logica, l'autenticazione
  * e la ricerca degli utenti.
  */
-public class DAO_Utente {
+public class DAO_Utente implements Interface_DAO_Utente {
 
     private Connection connection;
 
@@ -33,6 +34,7 @@ public class DAO_Utente {
      * {@code false} se lo username è già esistente (Violazione Unique Constraint).
      * @throws SQLException Se si verifica un errore SQL imprevisto.
      */
+    @Override
     public boolean save(String utente, String password) throws SQLException {
         String sql = "INSERT INTO UTENTE (Username, Password, Ruolo) VALUES (?, ?, 1)";
 
@@ -58,6 +60,7 @@ public class DAO_Utente {
      * @return {@code true} se l'operazione è completata (default).
      * @throws SQLException Se si verifica un errore durante le query di aggiornamento o eliminazione.
      */
+    @Override
     public boolean delete(String username) throws SQLException {
         String sql = "UPDATE utente SET ruolo = 30 WHERE username = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -126,6 +129,7 @@ public class DAO_Utente {
      * oppure {@code null} se le credenziali sono errate.
      * @throws SQLException Se si verifica un errore durante il recupero dei dati o la gestione del ResultSet.
      */
+    @Override
     public Utente login(String username, String password) throws SQLException {
         String sql = "SELECT Username, Ruolo FROM UTENTE WHERE Username = ? AND Password = ?";
 
@@ -217,6 +221,7 @@ public class DAO_Utente {
      * @return Una lista di {@link Utente} che soddisfano i criteri di ricerca.
      * @throws SQLException Se si verifica un errore durante l'esecuzione della query.
      */
+    @Override
     public ArrayList<Utente> findByKey(String username) throws SQLException {
     String sql = """
             SELECT Username, Ruolo 
@@ -252,6 +257,7 @@ public class DAO_Utente {
      * @return Una lista di {@link Utente} filtrata per ruolo 1 o 2.
      * @throws SQLException Se si verifica un errore durante il recupero dei dati.
      */
+    @Override
     public ArrayList<Utente> findByKeyUtente(String username) throws SQLException {
     String sql = """
             SELECT Username, Ruolo FROM UTENTE
